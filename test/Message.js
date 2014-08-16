@@ -3,6 +3,20 @@ var expect = require('unexpected'),
     Message = require('../lib/Message');
 
 describe('Message', function () {
+    it('should accept an options object with headers and body', function () {
+        var message = new Message({
+            headers: {
+                Received: ['foo', 'bar'],
+                Subject: 'hey'
+            },
+            body: 'abc'
+        });
+        expect(message.body, 'to equal', 'abc');
+        expect(message.headers.getAll('received'), 'to equal', ['foo', 'bar']);
+        expect(message.headers.getAll('subject'), 'to equal', ['hey']);
+        expect(message.toString(), 'to equal', 'Received: foo\r\nReceived: bar\r\nSubject: hey\r\n\r\nabc');
+    });
+
     it('should parse the headers from the input', function () {
         var message = new Message('From: thisguy@example.com\r\nTo: thisotherguy@example.com');
         expect(message.headers.getNames(), 'to equal', ['from', 'to']);
