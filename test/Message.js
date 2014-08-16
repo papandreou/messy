@@ -34,6 +34,39 @@ describe('Message', function () {
         expect(message.headers.get('subject'), 'to equal', 'abcdef');
     });
 
+    it('should keep the buffer as a Buffer when the message is provided as a Buffer', function () {
+        expect(new Message(Buffer.concat([
+            new Buffer(
+                'From: foo@bar\r\n' +
+                '\r\n',
+                'utf-8'
+            ),
+            new Buffer([0xf8])
+        ])), 'to have properties', {
+            body: new Buffer([0xf8])
+        });
+    });
+
+    it('should detect the end of the headers properly when separated by CRCR', function () {
+        expect(new Message(Buffer.concat([
+            new Buffer('From: foo@bar\r\r', 'utf-8'), new Buffer([0xf8])
+        ])), 'to have properties', {
+            body: new Buffer([0xf8])
+        });
+
+        expect(new Message(new Buffer('From: foo@bar\r\r', 'utf-8')), 'not to have property', 'body');
+    });
+
+    it('should detect the end of the headers properly when separated by LFLF', function () {
+        expect(new Message(Buffer.concat([
+            new Buffer('From: foo@bar\n\n', 'utf-8'), new Buffer([0xf8])
+        ])), 'to have properties', {
+            body: new Buffer([0xf8])
+        });
+
+        expect(new Message(new Buffer('From: foo@bar\n\n', 'utf-8')), 'not to have property', 'body');
+    });
+
     it('should not read past CRLFCRLF when parsing', function () {
         var message = new Message('Subject: abc\r\n\r\nFrom: me');
         expect(message.headers.get('from'), 'to be', undefined);
@@ -119,9 +152,9 @@ describe('Message', function () {
         expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body');
     });
 
-    it('should decode non-ASCII after CRLFCRLF as iso-8859-1 and preserve it when serializing', function () {
+    it('should read an iso-8859-1 body after LFCRLFCR into a buffer and turn it into REPLACEMENT CHARACTER U+FFFD when serializing as text', function () {
         var message = new Message(Buffer.concat([new Buffer('foo: bar\n\r\n\rthis is the:body', 'utf-8'), new Buffer([0xf8, 0xe6])]));
-
-        expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:bodyøæ');
+        expect(message.body, 'to equal', Buffer.concat([new Buffer('this is the:body', 'utf-8'), new Buffer([0xf8, 0xe6])]));
+        expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body��');
     });
 });
