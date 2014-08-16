@@ -11,6 +11,14 @@ describe('HttpResponse', function () {
         expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 200 OK\r\n\r\n');
     });
 
+    it('should parse a status line with more than one word in the status message', function () {
+        var httpResponse = new HttpResponse('HTTP/1.1 412 Precondition Failed');
+        expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');
+        expect(httpResponse.statusCode, 'to equal', 412);
+        expect(httpResponse.statusMessage, 'to equal', 'Precondition Failed');
+        expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 412 Precondition Failed\r\n\r\n');
+    });
+
     it('should parse a status line followed by headers', function () {
         var httpResponse = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n');
         expect(httpResponse.statusCode, 'to equal', 200);
