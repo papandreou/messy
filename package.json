@@ -10,7 +10,7 @@
     "lint": "jshint .",
     "test": "mocha && npm run lint",
     "travis": "npm test && npm run coverage && <coverage/lcov.info coveralls",
-    "coverage": "NODE_ENV=development istanbul cover _mocha -- --reporter dot"
+    "coverage": "NODE_ENV=development istanbul cover _mocha -- --reporter dot && echo google-chrome coverage/lcov-report/index.html"
   },
   "keywords": [
     "http",
