@@ -171,4 +171,38 @@ describe('Message', function () {
         expect(message.body, 'to equal', Buffer.concat([new Buffer('this is the:body', 'utf-8'), new Buffer([0xf8, 0xe6])]));
         expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body\ufffd\ufffd');
     });
+
+    describe('#satisfies', function () {
+        it('should support matching the headers', function () {
+            expect(new Message({headers: {foo: 'a'}}).satisfies({headers: {foo: 'a'}}), 'to be true');
+        });
+
+        it('should support matching the headers', function () {
+            expect(new Message({headers: {foo: 'a'}}).satisfies({headers: {foo: 'a'}}), 'to be true');
+
+            expect(new Message({headers: {foo: 'a'}}).satisfies({headers: {bar: 'a'}}), 'to be false');
+        });
+
+        it('should support passing the expected properties as a string', function () {
+            expect(new Message({headers: {foo: 'a'}}).satisfies('foo: a'), 'to be true');
+            expect(new Message({headers: {foo: 'a'}}).satisfies('foo: b'), 'to be false');
+        });
+
+        it('should support passing the expected headers as a string', function () {
+            expect(new Message({headers: {foo: 'a'}}).satisfies({headers: 'foo: a'}), 'to be true');
+            expect(new Message({headers: {foo: 'a'}}).satisfies({headers: 'foo: b'}), 'to be false');
+        });
+
+        it('should support matching a string body with a string', function () {
+            expect(new Message('foo: bar\n\nthe body').satisfies({body: 'the body'}), 'to be true');
+        });
+
+        it('should support matching a Buffer body with a Buffer', function () {
+            expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: new Buffer('the body', 'utf-8')}), 'to be true');
+        });
+
+        it('should support matching a object body (JSON) with an object', function () {
+            expect(new Message({body: {foo: 'bar', bar: 'baz'}}).satisfies({body: {bar: 'baz', foo: 'bar'}}), 'to be true');
+        });
+    });
 });
