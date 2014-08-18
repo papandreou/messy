@@ -79,16 +79,12 @@ describe('HttpRequest', function () {
         expect(httpRequest.url, 'to equal', '/bla?foobar');
     });
 
-    it('should accept the individual request line fields as options to the constructor and normalize them', function () {
+    it('should accept the individual request line fields as options to the constructor', function () {
         expect(new HttpRequest({
             method: 'get',
             url: '/foo',
             protocol: 'http/1.1'
-        }), 'to have properties', {
-            method: 'GET',
-            url: '/foo',
-            protocol: 'HTTP/1.1'
-        });
+        }).requestLine, 'to equal', 'GET /foo HTTP/1.1');
     });
 
     it('should consider an identical instance equal', function () {

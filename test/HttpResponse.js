@@ -82,16 +82,6 @@ describe('HttpResponse', function () {
         });
     });
 
-    it('should normalize the protocol and the status code when given as individual options to the constructor', function () {
-        expect(new HttpResponse({
-            protocol: 'http/1.1',
-            statusCode: '200'
-        }), 'to have properties', {
-            protocol: 'HTTP/1.1',
-            statusCode: 200
-        });
-    });
-
     it('should consider an identical instance equal', function () {
         var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
             httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
