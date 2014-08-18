@@ -70,7 +70,7 @@ describe('HttpResponse', function () {
         expect(new HttpResponse('HTTP/1.0 200 OK').protocolName, 'to equal', 'HTTP');
     });
 
-    it('should accept the individual status line fields as options to the constructor', function () {
+    it('should accept the individual status line properties as options to the constructor', function () {
         expect(new HttpResponse({
             protocol: 'HTTP/1.1',
             statusCode: 200,
@@ -116,5 +116,73 @@ describe('HttpResponse', function () {
         var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
             httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nquux');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
+    });
+
+    describe('#satisfies', function () {
+        it('should match on properties defined by Message', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                headers: {
+                    'Content-Type': 'text/html'
+                }
+            }), 'to be true');
+        });
+
+        it('should fail when matching on properties defined by Message', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            }), 'to be false');
+        });
+
+        it('should match on properties', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                statusCode: 200,
+                protocolVersion: '1.1'
+            }), 'to be true');
+        });
+
+        it('should match exhaustively on properties', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                statusLine: 'HTTP/1.1 200 OK',
+                statusCode: 200,
+                statusMessage: 'OK',
+                protocol: 'HTTP/1.1',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
+                body: undefined,
+                headers: {
+                    'Content-Type': 'text/html'
+                }
+            }, true), 'to be true');
+        });
+
+        it('should fail to match exhaustively on properties when a property is omitted', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                statusLine: 'HTTP/1.1 200 OK',
+                statusCode: 200,
+                statusMessage: 'OK',
+                protocol: 'HTTP/1.1',
+                protocolVersion: '1.1',
+                body: undefined,
+                headers: {
+                    'Content-Type': 'text/html'
+                }
+            }, true), 'to be false');
+        });
+
+        it('should fail to match exhaustively on properties when a property defined by Message is omitted', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nargh').satisfies({
+                statusLine: 'HTTP/1.1 200 OK',
+                statusCode: 200,
+                statusMessage: 'OK',
+                protocol: 'HTTP/1.1',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
+                headers: {
+                    'Content-Type': 'text/html'
+                }
+            }, true), 'to be false');
+        });
     });
 });
