@@ -40,6 +40,36 @@ describe('HttpResponse', function () {
         });
     });
 
+    it('should make the status line available as a getter', function () {
+        expect(new HttpResponse({
+            protocol: 'HTTP/1.1',
+            statusCode: 200,
+            statusMessage: 'OK'
+        }).statusLine, 'to equal', 'HTTP/1.1 200 OK');
+    });
+
+    it('should allow updating the status line via a setter', function () {
+        var httpResponse = new HttpResponse({
+            protocol: 'HTTP/1.1',
+            statusCode: 200,
+            statusMessage: 'OK'
+        });
+        httpResponse.statusLine = 'HTTP/1.0 400 Bad Request';
+        expect(httpResponse, 'to have properties', {
+            protocol: 'HTTP/1.0',
+            statusCode: 400,
+            statusMessage: 'Bad Request'
+        });
+    });
+
+    it('should make the protocol version available as a getter', function () {
+        expect(new HttpResponse('HTTP/1.1 200 OK').protocolVersion, 'to equal', '1.1');
+    });
+
+    it('should make the protocol name available as a getter', function () {
+        expect(new HttpResponse('HTTP/1.0 200 OK').protocolName, 'to equal', 'HTTP');
+    });
+
     it('should accept the individual status line fields as options to the constructor', function () {
         expect(new HttpResponse({
             protocol: 'HTTP/1.1',

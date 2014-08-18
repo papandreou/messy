@@ -32,6 +32,53 @@ describe('HttpRequest', function () {
         });
     });
 
+    it('should make the request line available as a getter', function () {
+        expect(new HttpRequest({
+            method: 'GET',
+            url: '/foo',
+            protocol: 'HTTP/1.1'
+        }).requestLine, 'to equal', 'GET /foo HTTP/1.1');
+    });
+
+    it('should allow updating the request line via a setter', function () {
+        var httpRequest = new HttpRequest({
+            method: 'GET',
+            url: '/foo',
+            protocol: 'HTTP/1.1'
+        });
+        httpRequest.requestLine = 'PUT /bar HTTP/1.0';
+        expect(httpRequest, 'to have properties', {
+            method: 'PUT',
+            url: '/bar',
+            protocol: 'HTTP/1.0'
+        });
+    });
+
+    it('should make the protocol version available as a getter', function () {
+        expect(new HttpRequest('GET /foo HTTP/1.1').protocolVersion, 'to equal', '1.1');
+    });
+
+    it('should make the protocol name available as a getter', function () {
+        expect(new HttpRequest('GET /foo HTTP/1.1').protocolName, 'to equal', 'HTTP');
+    });
+
+    it('should make the components of the request url available as individual getters', function () {
+        expect(new HttpRequest('GET /foo?foo=bar HTTP/1.1'), 'to have properties', {
+            path: '/foo',
+            search: '?foo=bar',
+            query: 'foo=bar'
+        });
+    });
+
+    it('should make path, query, and search available as individual setters', function () {
+        var httpRequest = new HttpRequest('GET /foo?foo=bar HTTP/1.1');
+        httpRequest.search = '?blabla';
+        httpRequest.path = '/bla';
+        expect(httpRequest.url, 'to equal', '/bla?blabla');
+        httpRequest.query = 'foobar';
+        expect(httpRequest.url, 'to equal', '/bla?foobar');
+    });
+
     it('should accept the individual request line fields as options to the constructor and normalize them', function () {
         expect(new HttpRequest({
             method: 'get',
