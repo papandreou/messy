@@ -183,6 +183,14 @@ describe('Message', function () {
             expect(new Message({headers: {foo: 'a'}}).satisfies({headers: {bar: 'a'}}), 'to be false');
         });
 
+        it('should support matching the serialized headers with a regular expression', function () {
+            expect(new Message({headers: {foo: 'a', bar: 'b'}}).satisfies({headers: /a\r\nBar/}), 'to be true');
+        });
+
+        it('should support matching individual headers with a regular expression', function () {
+            expect(new Message({headers: {foo: 'abc'}}).satisfies({headers: {foo: /bc$/}}), 'to be true');
+        });
+
         it('should support passing the expected properties as a string', function () {
             expect(new Message({headers: {foo: 'a'}}).satisfies('foo: a'), 'to be true');
             expect(new Message({headers: {foo: 'a'}}).satisfies('foo: b'), 'to be false');
@@ -197,12 +205,20 @@ describe('Message', function () {
             expect(new Message('foo: bar\n\nthe body').satisfies({body: 'the body'}), 'to be true');
         });
 
+        it('should support matching a string body with a regular expression', function () {
+            expect(new Message('foo: bar\n\nthe body').satisfies({body: /he b/}), 'to be true');
+        });
+
         it('should support matching a Buffer body with a Buffer', function () {
             expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: new Buffer('the body', 'utf-8')}), 'to be true');
         });
 
         it('should support matching a Buffer body with a string', function () {
             expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: 'the body'}), 'to be true');
+        });
+
+        it('should support matching a Buffer body with a regular expression', function () {
+            expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: /he b/}), 'to be true');
         });
 
         it('should support matching a string body with a Buffer', function () {
@@ -239,6 +255,10 @@ describe('Message', function () {
 
         it('should not support matching an object body with a string when the Content-Type is not application/json', function () {
             expect(new Message({headers: 'Content-Type: text/plain', body: {the: 'body'}}).satisfies({body: '{"the": "body"}'}), 'to be false');
+        });
+
+        it('should support matching an object body with a regular expression when the Content-Type is application/json', function () {
+            expect(new Message({headers: 'Content-Type: application/json', body: {the: 'body'}}).satisfies({body: /he": "bod/}), 'to be true');
         });
 
         it('should support matching an object body with a string containing invalid JSON when the Content-Type is application/json', function () {

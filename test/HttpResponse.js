@@ -127,6 +127,12 @@ describe('HttpResponse', function () {
             }), 'to be true');
         });
 
+        it('should support regexp matching', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
+                protocolName: /ttp/i
+            }), 'to be true');
+        });
+
         it('should fail when matching on properties defined by Message', function () {
             expect(new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html').satisfies({
                 headers: {

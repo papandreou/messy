@@ -132,6 +132,12 @@ describe('HttpRequest', function () {
             }), 'to be true');
         });
 
+        it('should support regexp matching', function () {
+            expect(new HttpRequest('GET /foo HTTP/1.1\r\nContent-Type: text/html').satisfies({
+                protocolName: /ttp/i
+            }), 'to be true');
+        });
+
         it('should fail when matching on properties defined by Message', function () {
             expect(new HttpRequest('GET /foo HTTP/1.1\r\nContent-Type: text/html').satisfies({
                 headers: {
