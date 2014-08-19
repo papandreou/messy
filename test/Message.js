@@ -201,7 +201,63 @@ describe('Message', function () {
             expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: new Buffer('the body', 'utf-8')}), 'to be true');
         });
 
-        it('should support matching a object body (JSON) with an object', function () {
+        it('should support matching a Buffer body with a string', function () {
+            expect(new Message(new Buffer('foo: bar\n\nthe body', 'utf-8')).satisfies({body: 'the body'}), 'to be true');
+        });
+
+        it('should support matching a string body with a Buffer', function () {
+            expect(new Message('foo: bar\n\nthe body').satisfies({body: new Buffer('the body', 'utf-8')}), 'to be true');
+        });
+
+        it('should support matching a Buffer body with an object when the Content-Type is application/json', function () {
+            expect(new Message(new Buffer('Content-Type: application/json\n\n{"the": "body"}', 'utf-8')).satisfies({body: {the: 'body'}}), 'to be true');
+        });
+
+        it('should not support matching a Buffer body with an object when the Content-Type is not application/json', function () {
+            expect(new Message(new Buffer('Content-Type: text/plain\n\n{"the": "body"}', 'utf-8')).satisfies({body: {the: 'body'}}), 'to be false');
+        });
+
+        it('should support matching a Buffer body containing invalid JSON with an object when the Content-Type is application/json', function () {
+            expect(new Message(new Buffer('Content-Type: application/json\n\n{"the": "body', 'utf-8')).satisfies({body: {the: 'body'}}), 'to be false');
+        });
+
+        it('should support matching a string body with an object when the Content-Type is application/json', function () {
+            expect(new Message('Content-Type: application/json\n\n{"the": "body"}').satisfies({body: {the: 'body'}}), 'to be true');
+        });
+
+        it('should not support matching a string body with an object when the Content-Type is not application/json', function () {
+            expect(new Message('Content-Type: text/plain\n\n{"the": "body"}').satisfies({body: {the: 'body'}}), 'to be false');
+        });
+
+        it('should support matching a string body containing invalid JSON with an object when the Content-Type is application/json', function () {
+            expect(new Message('Content-Type: application/json\n\n{"the": "body').satisfies({body: {the: 'body'}}), 'to be false');
+        });
+
+        it('should support matching an object body with a string when the Content-Type is application/json', function () {
+            expect(new Message({headers: 'Content-Type: application/json', body: {the: 'body'}}).satisfies({body: '{"the": "body"}'}), 'to be true');
+        });
+
+        it('should not support matching an object body with a string when the Content-Type is not application/json', function () {
+            expect(new Message({headers: 'Content-Type: text/plain', body: {the: 'body'}}).satisfies({body: '{"the": "body"}'}), 'to be false');
+        });
+
+        it('should support matching an object body with a string containing invalid JSON when the Content-Type is application/json', function () {
+            expect(new Message({headers: 'Content-Type: application/json', body: {the: 'body'}}).satisfies({body: '{"the": "body'}), 'to be false');
+        });
+
+        it('should support matching an object body with a Buffer when the Content-Type is application/json', function () {
+            expect(new Message({headers: 'Content-Type: application/json', body: {the: 'body'}}).satisfies({body: new Buffer('{"the": "body"}', 'utf-8')}), 'to be true');
+        });
+
+        it('should not support matching an object body with a Buffer when the Content-Type is not application/json', function () {
+            expect(new Message({headers: 'Content-Type: text/plain', body: {the: 'body'}}).satisfies({body: new Buffer('{"the": "body"}', 'utf-8')}), 'to be false');
+        });
+
+        it('should support matching an object body with a Buffer containing invalid JSON when the Content-Type is application/json', function () {
+            expect(new Message({headers: 'Content-Type: application/json', body: {the: 'body'}}).satisfies({body: new Buffer('{"the": "body', 'utf-8')}), 'to be false');
+        });
+
+        it('should support matching an object body (JSON) with an object', function () {
             expect(new Message({body: {foo: 'bar', bar: 'baz'}}).satisfies({body: {bar: 'baz', foo: 'bar'}}), 'to be true');
         });
     });
