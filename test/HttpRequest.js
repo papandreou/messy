@@ -32,12 +32,12 @@ describe('HttpRequest', function () {
         });
     });
 
-    it('should make the request line available as a getter', function () {
+    it('should make the request line available', function () {
         expect(new HttpRequest({
             method: 'GET',
             url: '/foo',
             protocol: 'HTTP/1.1'
-        }).requestLine, 'to equal', 'GET /foo HTTP/1.1');
+        }).requestLine.toString(), 'to equal', 'GET /foo HTTP/1.1');
     });
 
     it('should allow updating the request line via a setter', function () {
@@ -46,7 +46,7 @@ describe('HttpRequest', function () {
             url: '/foo',
             protocol: 'HTTP/1.1'
         });
-        httpRequest.requestLine = 'PUT /bar HTTP/1.0';
+        httpRequest.requestLine.populateFromString('PUT /bar HTTP/1.0');
         expect(httpRequest, 'to have properties', {
             method: 'PUT',
             url: '/bar',
@@ -84,7 +84,7 @@ describe('HttpRequest', function () {
             method: 'get',
             url: '/foo',
             protocol: 'http/1.1'
-        }).requestLine, 'to equal', 'GET /foo HTTP/1.1');
+        }).requestLine.toString(), 'to equal', 'GET /foo HTTP/1.1');
     });
 
     it('should consider an identical instance equal', function () {
