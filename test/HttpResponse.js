@@ -55,7 +55,6 @@ describe('HttpResponse', function () {
             statusMessage: 'OK'
         });
         httpResponse.statusLine.populateFromString('HTTP/1.0 400 Bad Request');
-console.log(httpResponse.statusLine);
         expect(httpResponse, 'to have properties', {
             protocol: 'HTTP/1.0',
             statusCode: 400,
