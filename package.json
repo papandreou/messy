@@ -29,5 +29,8 @@
     "jshint": "=2.5.3",
     "mocha": "=1.21.4",
     "unexpected": "=4.0.5"
+  },
+  "dependencies": {
+    "underscore": "^1.6.0"
   }
 }
