@@ -40,21 +40,22 @@ describe('HttpResponse', function () {
         });
     });
 
-    it('should make the status line available as a getter', function () {
+    it('should expose the StatusLine instance', function () {
         expect(new HttpResponse({
             protocol: 'HTTP/1.1',
             statusCode: 200,
             statusMessage: 'OK'
-        }).statusLine, 'to equal', 'HTTP/1.1 200 OK');
+        }).statusLine.toString(), 'to equal', 'HTTP/1.1 200 OK');
     });
 
-    it('should allow updating the status line via a setter', function () {
+    it('should allow updating the status line', function () {
         var httpResponse = new HttpResponse({
             protocol: 'HTTP/1.1',
             statusCode: 200,
             statusMessage: 'OK'
         });
-        httpResponse.statusLine = 'HTTP/1.0 400 Bad Request';
+        httpResponse.statusLine.populateFromString('HTTP/1.0 400 Bad Request');
+console.log(httpResponse.statusLine);
         expect(httpResponse, 'to have properties', {
             protocol: 'HTTP/1.0',
             statusCode: 400,
