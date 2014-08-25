@@ -106,8 +106,8 @@ describe('Message', function () {
         expect(message.toString(), 'to equal', 'Subject: =?iso-8859-1?Q?=A1?=Hola, se=?iso-8859-1?Q?=F1?=or!\r\n\r\n');
     });
 
-    it('should produce CRLF when handed an empty buffer', function () {
-        expect(new Message(new Buffer(0)).toString(), 'to equal', '\r\n');
+    it('should produce an empty string when handed an empty buffer', function () {
+        expect(new Message(new Buffer(0)).toString(), 'to equal', '');
     });
 
     it('should parse Real Life message from Apple Mail', function () {

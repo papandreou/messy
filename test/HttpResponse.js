@@ -8,7 +8,7 @@ describe('HttpResponse', function () {
         expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');
         expect(httpResponse.statusCode, 'to equal', 200);
         expect(httpResponse.statusMessage, 'to equal', 'OK');
-        expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 200 OK\r\n\r\n');
+        expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 200 OK\r\n');
     });
 
     it('should parse a status line with more than one word in the status message', function () {
@@ -16,7 +16,7 @@ describe('HttpResponse', function () {
         expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');
         expect(httpResponse.statusCode, 'to equal', 412);
         expect(httpResponse.statusMessage, 'to equal', 'Precondition Failed');
-        expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 412 Precondition Failed\r\n\r\n');
+        expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 412 Precondition Failed\r\n');
     });
 
     it('should parse a status line followed by headers', function () {
@@ -38,6 +38,13 @@ describe('HttpResponse', function () {
             statusCode: 200,
             statusMessage: 'OK'
         });
+    });
+
+    it('should only include CRLFCRLF when there are no headers', function () {
+        expect(new HttpResponse({
+            statusLine: 'HTTP/1.1 200 OK',
+            body: 'foo'
+        }).toString(), 'to equal', 'HTTP/1.1 200 OK\r\n\r\nfoo');
     });
 
     it('should expose the StatusLine instance', function () {

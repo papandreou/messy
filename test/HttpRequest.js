@@ -8,7 +8,7 @@ describe('HttpRequest', function () {
         expect(httpRequest.method, 'to equal', 'GET');
         expect(httpRequest.url, 'to equal', '/foo');
         expect(httpRequest.protocol, 'to equal', 'HTTP/1.1');
-        expect(httpRequest.toString(), 'to equal', 'GET /foo HTTP/1.1\r\n\r\n');
+        expect(httpRequest.toString(), 'to equal', 'GET /foo HTTP/1.1\r\n');
     });
 
     it('should parse a request line followed by headers', function () {
@@ -30,6 +30,13 @@ describe('HttpRequest', function () {
             url: '/foo',
             protocol: 'HTTP/1.1'
         });
+    });
+
+    it('should only include CRLFCRLF when there are no headers', function () {
+        expect(new HttpRequest({
+            requestLine: 'GET / HTTP/1.1',
+            body: 'foo'
+        }).toString(), 'to equal', 'GET / HTTP/1.1\r\n\r\nfoo');
     });
 
     it('should make the request line available', function () {
