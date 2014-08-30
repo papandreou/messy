@@ -3,7 +3,12 @@ var unexpected = require('unexpected'),
     Headers = require('../lib/Headers');
 
 describe('Headers', function () {
-    var expect = unexpected.clone().installPlugin(require('unexpected-messy'));
+    var expect = unexpected.clone();
+
+    // Not published yet
+    try {
+        expect.installPlugin(require('unexpected-messy'));
+    } catch (e) {}
 
     it('should accept a string', function () {
         var headers = new Headers('Subject: hey, dude!');
