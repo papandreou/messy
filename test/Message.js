@@ -171,4 +171,34 @@ describe('Message', function () {
         expect(message.body, 'to equal', Buffer.concat([new Buffer('this is the:body', 'utf-8'), new Buffer([0xf8, 0xe6])]));
         expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body\ufffd\ufffd');
     });
+
+    describe('#hasEmptyBody', function () {
+        it('should consider a zero length Buffer to be an empty body', function () {
+            expect(new Message({body: new Buffer([])}).hasEmptyBody(), 'to be true');
+        });
+
+        it('should consider a non-zero length Buffer not to be an empty body', function () {
+            expect(new Message({body: new Buffer([123])}).hasEmptyBody(), 'to be false');
+        });
+
+        it('should consider the empty string to be an empty body', function () {
+            expect(new Message({body: ''}).hasEmptyBody(), 'to be true');
+        });
+
+        it('should consider a non-empty string not to be an empty body', function () {
+            expect(new Message({body: 'foo'}).hasEmptyBody(), 'to be false');
+        });
+
+        it('should consider undefined to be an empty body', function () {
+            expect(new Message({body: undefined}).hasEmptyBody(), 'to be true');
+        });
+
+        it('should consider an absent body to be empty', function () {
+            expect(new Message().hasEmptyBody(), 'to be true');
+        });
+
+        it('should consider an empty Object to be a non-empty body', function () {
+            expect(new Message({body: {}}).hasEmptyBody(), 'to be false');
+        });
+    });
 });
