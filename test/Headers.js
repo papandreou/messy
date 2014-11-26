@@ -98,4 +98,11 @@ describe('Headers', function () {
             expect(new Headers({foo: 'hey', quux: 'baz'}).remove('foo', ['dah', 'bla']), 'to equal', 0);
         });
     });
+
+    describe('#toCanonicalObject', function () {
+        expect(new Headers({foo: 'hey', quux: 'baz'}).toCanonicalObject(), 'to equal', {
+            Foo: ['hey'],
+            Quux: ['baz']
+        });
+    });
 });
