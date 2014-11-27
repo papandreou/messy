@@ -30,7 +30,7 @@
     "jshint": "=2.5.3",
     "mocha": "=1.21.4",
     "unexpected": "5.0.0-beta22",
-    "unexpected-messy": "2.2.1"
+    "unexpected-messy": "2.2.3"
   },
   "dependencies": {
     "underscore": "^1.6.0"
