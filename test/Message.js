@@ -29,23 +29,23 @@ describe('Message', function () {
 
     it('should handle folded lines when parsing', function () {
         var message = new Message('Subject: abc\r\n def');
-        expect(message.headers.get('subject'), 'to equal', 'abcdef');
+        expect(message.headers.get('subject'), 'to equal', 'abc def');
     });
 
     it('should handle folded lines with just CR when parsing', function () {
         var message = new Message('Subject: abc\r def');
-        expect(message.headers.get('subject'), 'to equal', 'abcdef');
+        expect(message.headers.get('subject'), 'to equal', 'abc def');
     });
 
     it('should handle folded lines with just LF when parsing', function () {
         var message = new Message('Subject: abc\n def');
-        expect(message.headers.get('subject'), 'to equal', 'abcdef');
+        expect(message.headers.get('subject'), 'to equal', 'abc def');
     });
 
     it('should handle folded lines + tabs when parsing', function () {
         // Observed on iPhone
         var message = new Message('Subject: abc\r\n\tdef');
-        expect(message.headers.get('subject'), 'to equal', 'abcdef');
+        expect(message.headers.get('subject'), 'to equal', 'abc\tdef');
     });
 
     it('should keep the buffer as a Buffer when the message is provided as a Buffer', function () {
@@ -128,11 +128,11 @@ describe('Message', function () {
         ].join('\r\n'), 'utf-8'));
 
         expect(message.headers.getNames(), 'to equal', ['content-type', 'content-transfer-encoding', 'subject', 'from', 'message-id', 'date', 'to', 'mime-version']);
-        expect(message.headers.get('Content-Type'), 'to equal', 'multipart/mixed;boundary=Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD');
+        expect(message.headers.get('Content-Type'), 'to equal', 'multipart/mixed;\tboundary=Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD');
         expect(message.headers.get('content-transfer-encoding'), 'to equal', '7bit');
         expect(message.headers.get('Subject'), 'to equal', 'Foobar 123');
 
-        expect(message.toString().replace(/\r\n /, ''), 'to match', /multipart\/mixed;boundary=Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD/);
+        expect(message.toString(), 'to contain', 'multipart\/mixed;\r\n\tboundary=Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD');
     });
 
     it('should preserve repeated headers', function () {
