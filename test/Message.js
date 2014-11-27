@@ -1,8 +1,10 @@
 /*global describe, it*/
-var expect = require('unexpected'),
+var unexpected = require('unexpected'),
     Message = require('../lib/Message');
 
 describe('Message', function () {
+    var expect = unexpected.clone().installPlugin(require('unexpected-messy'));
+
     it('should accept an options object with headers and body', function () {
         var message = new Message({
             headers: {
@@ -199,6 +201,54 @@ describe('Message', function () {
 
         it('should consider an empty Object to be a non-empty body', function () {
             expect(new Message({body: {}}).hasEmptyBody(), 'to be false');
+        });
+    });
+
+    describe('with a multipart body', function () {
+        var src =
+            'Content-Type: multipart/form-data;\r\n' +
+            ' boundary=--------------------------231099812216460892104111\r\n' +
+            '\r\n' +
+            '----------------------------231099812216460892104111\r\n' +
+            'Content-Disposition: form-data; name="recipient"\r\n' +
+            '\r\n' +
+            'andreas@one.com\r\n' +
+            '----------------------------231099812216460892104111\r\n' +
+            'Content-Disposition: form-data; name="Name "\r\n' +
+            '\r\n' +
+            'The name\r\n' +
+            '----------------------------231099812216460892104111\r\n' +
+            'Content-Disposition: form-data; name="email"\r\n' +
+            '\r\n' +
+            'the@email.com\r\n' +
+            '----------------------------231099812216460892104111\r\n' +
+            'Content-Disposition: form-data; name="Message "\r\n' +
+            '\r\n' +
+            'The message\r\n' +
+            '----------------------------231099812216460892104111--\r\n';
+
+        it('should decode the multipart parts when the body is passed as a Buffer', function () {
+            var message = new Message(new Buffer(src, 'utf-8'));
+
+            expect(message.toString(), 'to equal', src);
+
+            expect(message, 'to satisfy', {
+                body: [
+                    new Message('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com'),
+                    new Message('Content-Disposition: form-data; name="Name "\r\n\r\nThe name'),
+                    new Message('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com'),
+                    new Message('Content-Disposition: form-data; name="Message "\r\n\r\nThe message')
+                ]
+            });
+        });
+
+        it('should decode the multipart parts when the body is passed as a string', function () {
+            expect(new Message(src).body, 'to equal', [
+                new Message('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com'),
+                new Message('Content-Disposition: form-data; name="Name "\r\n\r\nThe name'),
+                new Message('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com'),
+                new Message('Content-Disposition: form-data; name="Message "\r\n\r\nThe message')
+            ]);
         });
     });
 });
