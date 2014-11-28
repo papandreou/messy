@@ -1,10 +1,8 @@
 /*global describe, it*/
-var unexpected = require('unexpected'),
+var expect = require('unexpected'),
     Message = require('../lib/Message');
 
 describe('Message', function () {
-    var expect = unexpected.clone().installPlugin(require('unexpected-messy'));
-
     it('should accept an options object with headers and body', function () {
         var message = new Message({
             headers: {
@@ -232,14 +230,12 @@ describe('Message', function () {
 
             expect(message.toString(), 'to equal', src);
 
-            expect(message, 'to satisfy', {
-                body: [
-                    new Message('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com'),
-                    new Message('Content-Disposition: form-data; name="Name "\r\n\r\nThe name'),
-                    new Message('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com'),
-                    new Message('Content-Disposition: form-data; name="Message "\r\n\r\nThe message')
-                ]
-            });
+            expect(message.body, 'to equal', [
+                new Message(new Buffer('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com', 'utf-8')),
+                new Message(new Buffer('Content-Disposition: form-data; name="Name "\r\n\r\nThe name', 'utf-8')),
+                new Message(new Buffer('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com', 'utf-8')),
+                new Message(new Buffer('Content-Disposition: form-data; name="Message "\r\n\r\nThe message', 'utf-8'))
+            ]);
         });
 
         it('should decode the multipart parts when the body is passed as a string', function () {
