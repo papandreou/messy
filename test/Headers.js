@@ -33,6 +33,24 @@ describe('Headers', function () {
         expect(headers.toString(), 'to equal', 'Received: foo\r\n');
     });
 
+    it('should accept multiple occurrences of the same header with different casing', function () {
+        var headers = new Headers({cookie: 'foo=bar', Cookie: 'quux=baz'});
+
+        expect(headers.toString(), 'to equal', 'Cookie: foo=bar\r\nCookie: quux=baz\r\n');
+    });
+
+    it('should accept multiple occurrences of the same header with different casing when the first is given as an array', function () {
+        var headers = new Headers({cookie: ['foo=bar'], Cookie: 'quux=baz'});
+
+        expect(headers.toString(), 'to equal', 'Cookie: foo=bar\r\nCookie: quux=baz\r\n');
+    });
+
+    it('should accept multiple occurrences of the same header with different casing when the second is given as an array', function () {
+        var headers = new Headers({cookie: 'foo=bar', Cookie: ['quux=baz']});
+
+        expect(headers.toString(), 'to equal', 'Cookie: foo=bar\r\nCookie: quux=baz\r\n');
+    });
+
     describe('#remove', function () {
         it('should remove all header values for the given header when only passed one argument', function () {
             var headers = new Headers({foo: ['bla', 'bar'], quux: 'baz'});
