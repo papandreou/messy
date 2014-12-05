@@ -123,4 +123,28 @@ describe('Headers', function () {
             Quux: ['baz']
         });
     });
+
+    describe('#set', function () {
+        it('should preserve existing values when adding a string value', function () {
+            var headers = new Headers({foo: 'bar'});
+            expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
+            headers.set('foo', 'quux');
+            expect(headers.toString(), 'to equal', 'Foo: bar\r\nFoo: quux\r\n');
+        });
+
+        it('should remove all existing values when passed an empty array', function () {
+            var headers = new Headers({foo: 'bar'});
+            expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
+            headers.set('foo', []);
+            expect(headers.valuesByName.foo, 'to be undefined');
+            expect(headers.toString(), 'to equal', '');
+        });
+
+        it('should replace existing values when passed an array of strings', function () {
+            var headers = new Headers({foo: 'bar'});
+            expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
+            headers.set('foo', ['hey']);
+            expect(headers.toString(), 'to equal', 'Foo: hey\r\n');
+        });
+    });
 });
