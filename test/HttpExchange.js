@@ -61,7 +61,7 @@ describe('HttpExchange', function () {
         expect(
             httpExchange.toString(),
             'to equal',
-            'GET / HTTP/1.1\r\nContent-Type: text/html\r\n\r\nThe Body\r\n\r\nHTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\nContent-Type: application/json\r\n\r\n{"foo":123}'
+            'GET / HTTP/1.1\r\nContent-Type: text/html\r\n\r\nThe Body\r\n\r\nHTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\n\r\n{"foo":123}'
         );
     });
 
