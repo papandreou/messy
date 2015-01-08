@@ -96,16 +96,6 @@ describe('Message', function () {
         expect(message.headers.get('from'), 'to be', undefined);
     });
 
-    it.skip('should rfc2047 decode the header values', function () {
-        expect(new Message('Subject: =?iso-8859-1?Q?=A1?=Hola, se=?iso-8859-1?Q?=F1?=or!').get('subject'), 'to equal', '¡Hola, señor!');
-    });
-
-    it.skip('should rfc2047 encode when serializing', function () {
-        var message = new Message();
-        message.set('subject', '¡Hola, señor!');
-        expect(message.toString(), 'to equal', 'Subject: =?iso-8859-1?Q?=A1?=Hola, se=?iso-8859-1?Q?=F1?=or!\r\n\r\n');
-    });
-
     it('should produce an empty string when handed an empty buffer', function () {
         expect(new Message(new Buffer(0)).toString(), 'to equal', '');
     });
