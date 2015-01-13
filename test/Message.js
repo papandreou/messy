@@ -220,6 +220,8 @@ describe('Message', function () {
 
             expect(message.toString(), 'to equal', src);
 
+            message.populateMultipartBody();
+
             expect(message.body, 'to equal', [
                 new Message(new Buffer('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com', 'utf-8')),
                 new Message(new Buffer('Content-Disposition: form-data; name="Name "\r\n\r\nThe name', 'utf-8')),
@@ -229,7 +231,11 @@ describe('Message', function () {
         });
 
         it('should decode the multipart parts when the body is passed as a string', function () {
-            expect(new Message(src).body, 'to equal', [
+            var message = new Message(src);
+
+            message.populateMultipartBody();
+
+            expect(message.body, 'to equal', [
                 new Message('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com'),
                 new Message('Content-Disposition: form-data; name="Name "\r\n\r\nThe name'),
                 new Message('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com'),
