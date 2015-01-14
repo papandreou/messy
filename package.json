@@ -32,8 +32,11 @@
     "unexpected": "5.0.0-beta31"
   },
   "dependencies": {
+    "iconv-lite": "0.4.6",
+    "quoted-printable": "1.0.0",
     "rfc2047": "1.0.1",
     "rfc2231": "1.2.0",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "utf8": "2.1.0"
   }
 }

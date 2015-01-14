@@ -303,6 +303,66 @@ describe('Message', function () {
         });
     });
 
+    describe('#decodedBody', function () {
+        it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                'Zm9v\r\n'
+            ).decodedBody, 'to equal', 'foo');
+        });
+
+        it('should decode a base64 body to a Buffer when the Content-Transfer-Encoding is base64 and the Content-Type is not textual', function () {
+            expect(new Message(
+                'Content-Type: image/png; charset=UTF-8\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                'Zm9v\r\n'
+            ).decodedBody, 'to equal', new Buffer('foo'));
+        });
+
+        it('should decode quoted-printable when the Content-Transfer-Encoding header says so', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Content-Transfer-Encoding: quoted-printable\r\n' +
+                '\r\n' +
+                'Abc =C3=A6=C3=B8=C3=A5\r\n'
+            ).decodedBody, 'to equal', 'Abc æøå\r\n');
+        });
+
+        it('should not break if the Content-Transfer-Encoding is unsupported', function () {
+            expect(new Message(
+                'Content-Type: image/png; charset=UTF-8\r\n' +
+                'Content-Transfer-Encoding: foo\r\n' +
+                '\r\n' +
+                'Zm9v\r\n'
+            ).decodedBody, 'to equal', 'Zm9v\r\n');
+        });
+
+        it('should support quoted-printable with iso-8859-1', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=iso-8859-1\r\n' +
+                'Content-Transfer-Encoding: quoted-printable\r\n' +
+                '\r\n' +
+                'Abc =F8\r\n'
+            ).decodedBody, 'to equal', 'Abc ø\r\n');
+        });
+
+        it('should support quoted-printable with no Content-Transfer-Encoding', function () {
+            expect(new Message(
+                Buffer.concat([
+                    new Buffer(
+                        'Content-Type: text/plain; charset=iso-8859-1\r\n' +
+                        '\r\n' +
+                        'Abc '),
+                    new Buffer([0xf8]),
+                    new Buffer('\r\n')
+                ])
+            ).decodedBody, 'to equal', 'Abc ø\r\n');
+        });
+    });
+
     describe('#fileName', function () {
         describe('when invoked as a getter', function () {
             it('should decode the Content-Disposition filename', function () {
