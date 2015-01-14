@@ -32,8 +32,8 @@
     "unexpected": "5.0.0-beta31"
   },
   "dependencies": {
-    "rfc2047": "1.0.0",
-    "rfc2231": "1.1.0",
+    "rfc2047": "1.0.1",
+    "rfc2231": "1.1.1",
     "underscore": "^1.6.0"
   }
 }
