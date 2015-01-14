@@ -267,6 +267,40 @@ describe('Message', function () {
             message.body = src;
             expect(message.parts, 'to have length', 4);
         });
+
+        it('should support updating the parts property', function () {
+            var message = new Message(src);
+            message.parts = [];
+            expect(message.parts, 'to equal', []);
+        });
+
+        it('should recompute the body if the parts are updated', function () {
+            var message = new Message(src);
+            expect(message.parts, 'to have length', 4);
+            message.parts.splice(1, 3);
+            expect(message.body, 'to equal',
+                '----------------------------231099812216460892104111\r\n' +
+                'Content-Disposition: form-data; name="recipient"\r\n' +
+                '\r\n' +
+                'andreas@one.com\r\n' +
+                '----------------------------231099812216460892104111--\r\n');
+        });
+
+        it('should recompute the body if the parts are updated, binary mode', function () {
+            var message = new Message(src);
+            expect(message.parts, 'to have length', 4);
+            message.parts[0].body = new Buffer([0]);
+            message.parts.splice(1, 3);
+            var body = message.body;
+            expect(body, 'to be a', Buffer);
+            expect(body.toString('utf-8'), 'to equal',
+                '----------------------------231099812216460892104111\r\n' +
+                'Content-Disposition: form-data; name="recipient"\r\n' +
+                '\r\n' +
+                '\x00\r\n' +
+                '----------------------------231099812216460892104111--\r\n'
+            );
+        });
     });
 
     describe('#fileName', function () {
