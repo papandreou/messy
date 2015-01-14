@@ -220,9 +220,7 @@ describe('Message', function () {
 
             expect(message.toString(), 'to equal', src);
 
-            message.populateMultipartBody();
-
-            expect(message.body, 'to equal', [
+            expect(message.parts, 'to equal', [
                 new Message(new Buffer('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com', 'utf-8')),
                 new Message(new Buffer('Content-Disposition: form-data; name="Name "\r\n\r\nThe name', 'utf-8')),
                 new Message(new Buffer('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com', 'utf-8')),
@@ -233,14 +231,41 @@ describe('Message', function () {
         it('should decode the multipart parts when the body is passed as a string', function () {
             var message = new Message(src);
 
-            message.populateMultipartBody();
-
-            expect(message.body, 'to equal', [
+            expect(message.parts, 'to equal', [
                 new Message('Content-Disposition: form-data; name="recipient"\r\n\r\nandreas@one.com'),
                 new Message('Content-Disposition: form-data; name="Name "\r\n\r\nThe name'),
                 new Message('Content-Disposition: form-data; name="email"\r\n\r\nthe@email.com'),
                 new Message('Content-Disposition: form-data; name="Message "\r\n\r\nThe message')
             ]);
+        });
+
+        it('#toString should serialize the (possibly mutated) decoded parts if available', function () {
+            var message = new Message(src);
+
+            message.parts.splice(1, 3);
+
+            message.parts[0].headers.set('Foo', 'quux');
+
+            expect(
+                message.toString(),
+                'to equal',
+                'Content-Type: multipart/form-data;\r\n' +
+                ' boundary=--------------------------231099812216460892104111\r\n' +
+                '\r\n' +
+                '----------------------------231099812216460892104111\r\n' +
+                'Content-Disposition: form-data; name="recipient"\r\n' +
+                'Foo: quux\r\n' +
+                '\r\n' +
+                'andreas@one.com\r\n' +
+                '----------------------------231099812216460892104111--\r\n'
+            );
+        });
+
+        it('should reparse the parts if the body of the containing Message is updated', function () {
+            var message = new Message(src);
+            message.parts.splice(1, 3);
+            message.body = src;
+            expect(message.parts, 'to have length', 4);
         });
     });
 
