@@ -147,4 +147,89 @@ describe('Headers', function () {
             expect(headers.toString(), 'to equal', 'Foo: hey\r\n');
         });
     });
+
+    describe('#parameter()', function () {
+        describe('when called with just a header name', function () {
+            it('should return a hash of attributes when the header has attributes', function () {
+                expect(new Headers('Foo: bar; quux=baz').parameter('Foo'), 'to equal', {quux: 'baz'});
+            });
+
+            it('should unquote quoted parameters', function () {
+                expect(new Headers('Foo: bar; quux="baz"').parameter('Foo'), 'to equal', {quux: 'baz'});
+            });
+
+            it('should return an empty hash when the header has no attributes', function () {
+                expect(new Headers('Foo: bar').parameter('Foo'), 'to equal', {});
+            });
+
+            it('should return undefined when the header does not exist', function () {
+                expect(new Headers('Foo: bar').parameter('Quux'), 'to equal', undefined);
+            });
+
+            it('should decode rfc2231-encoded attributes', function () {
+                expect(new Headers(
+                'Content-Type: text/plain;\r\n' +
+                ' filename*0*=utf-8\'\'%72%C3%A6%61%6C%6C%79%20%73%63%72%65%77%65%64%20%75;\r\n' +
+                ' filename*1*=%70%20%6C%6F%6E%67%20%61%74%74%61%63%68%6D%65%6E%74%20%66%69;\r\n' +
+                ' filename*2*=%6C%65%6E%61%6D%65%20%77%69%74%68%20%73%6D%69%6C%65%79%73%E2;\r\n' +
+                ' filename*3*=%98%BA%20%61%6E%64%20%E2%98%BA%61%6E%64%20%C2%A1%48%6F%6C%61;\r\n' +
+                ' filename*4*=%2C%20%73%65%C3%B1%6F%72%21%20%61%6E%64%20%66%6F%72%65%69%67;\r\n' +
+                ' filename*5*=%6E%20%77%65%69%72%64%6E%65%73%73%D7%9D%D7%95%D7%9C%D7%A9%20;\r\n' +
+                ' filename*6*=%D7%9F%D7%91%20%D7%99%D7%9C%D7%98%D7%A4%D7%A0%20%69%6E%20%69;\r\n' +
+                ' filename*7*=%74%2E%E2%98%BA').parameter('Content-Type'), 'to equal', {
+                    filename: 'ræally screwed up long attachment filename with smileys☺ and ☺and ¡Hola, señor! and foreign weirdnessםולש ןב ילטפנ in it.☺'
+                });
+            });
+        });
+
+        describe('when called with a header name and an attribute name', function () {
+            it('should return the attribute value', function () {
+                expect(new Headers('Foo: hey').parameter('Foo'), 'to equal', {});
+            });
+
+            it('should return undefined when the header has no attributes', function () {
+                expect(new Headers('Foo: hey').parameter('Foo', 'bar'), 'to equal', undefined);
+            });
+
+            it('should return undefined when the header has attributes, but not the one being asked for', function () {
+                expect(new Headers('Foo: hey; quux=blah').parameter('Foo', 'bar'), 'to equal', undefined);
+            });
+
+            it('should return undefined when the header is not there', function () {
+                expect(new Headers('Foo: bar').parameter('Bar', 'quux'), 'to equal', undefined);
+            });
+        });
+
+        describe('when called with a header name, an attribute name, and an attribute value', function () {
+            it('should define the attribute if it does not exist', function () {
+                var headers = new Headers('Foo: hey');
+                headers.parameter('Foo', 'blah', 'baz')
+                expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
+            });
+
+            it('should update the attribute if it already exists', function () {
+                var headers = new Headers('Foo: hey; blah=quux');
+                headers.parameter('Foo', 'blah', 'baz')
+                expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
+            });
+
+            it('should transparently encode non-ASCII attribute values using rfc2231', function () {
+                var headers = new Headers('Content-Type: text/plain');
+                headers.parameter('Content-Type', 'filename', 'ræally screwed up long attachment filename with smileys☺ and ☺and ¡Hola, señor! and foreign weirdnessםולש ןב ילטפנ in it.☺');
+                expect(
+                    headers.toString(),
+                    'to equal',
+                    'Content-Type: text/plain;\r\n' +
+                    ' filename*0*=utf-8\'\'%72%C3%A6%61%6C%6C%79%20%73%63%72%65%77%65%64%20%75;\r\n' +
+                    ' filename*1*=%70%20%6C%6F%6E%67%20%61%74%74%61%63%68%6D%65%6E%74%20%66%69;\r\n' +
+                    ' filename*2*=%6C%65%6E%61%6D%65%20%77%69%74%68%20%73%6D%69%6C%65%79%73%E2;\r\n' +
+                    ' filename*3*=%98%BA%20%61%6E%64%20%E2%98%BA%61%6E%64%20%C2%A1%48%6F%6C%61;\r\n' +
+                    ' filename*4*=%2C%20%73%65%C3%B1%6F%72%21%20%61%6E%64%20%66%6F%72%65%69%67;\r\n' +
+                    ' filename*5*=%6E%20%77%65%69%72%64%6E%65%73%73%D7%9D%D7%95%D7%9C%D7%A9%20;\r\n' +
+                    ' filename*6*=%D7%9F%D7%91%20%D7%99%D7%9C%D7%98%D7%A4%D7%A0%20%69%6E%20%69;\r\n' +
+                    ' filename*7*=%74%2E%E2%98%BA\r\n'
+                );
+            });
+        });
+    });
 });
