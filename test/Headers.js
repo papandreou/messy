@@ -203,13 +203,13 @@ describe('Headers', function () {
         describe('when called with a header name, an attribute name, and an attribute value', function () {
             it('should define the attribute if it does not exist', function () {
                 var headers = new Headers('Foo: hey');
-                headers.parameter('Foo', 'blah', 'baz')
+                headers.parameter('Foo', 'blah', 'baz');
                 expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
             });
 
             it('should update the attribute if it already exists', function () {
                 var headers = new Headers('Foo: hey; blah=quux');
-                headers.parameter('Foo', 'blah', 'baz')
+                headers.parameter('Foo', 'blah', 'baz');
                 expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
             });
 
