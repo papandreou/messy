@@ -349,6 +349,14 @@ describe('Message', function () {
             ).decodedBody, 'to equal', 'Abc ø\r\n');
         });
 
+        it('should provide a decoded body when the body is already given as a string with no Content-Transfer-Encoding, even when a charset is defined', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                '\r\n' +
+                'Abcdef\r\n'
+            ).decodedBody, 'to equal', 'Abcdef\r\n');
+        });
+
         it('should support quoted-printable with no Content-Transfer-Encoding', function () {
             expect(new Message(
                 Buffer.concat([
