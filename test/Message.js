@@ -304,12 +304,21 @@ describe('Message', function () {
     });
 
     describe('#decodedBody', function () {
-        it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual', function () {
+        it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a string', function () {
             expect(new Message(
                 'Content-Type: text/plain; charset=UTF-8\r\n' +
                 'Content-Transfer-Encoding: base64\r\n' +
                 '\r\n' +
                 'Zm9v\r\n'
+            ).decodedBody, 'to equal', 'foo');
+        });
+
+        it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a Buffer', function () {
+            expect(new Message(new Buffer(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                'Zm9v\r\n')
             ).decodedBody, 'to equal', 'foo');
         });
 
