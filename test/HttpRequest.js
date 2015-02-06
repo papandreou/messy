@@ -24,6 +24,10 @@ describe('HttpRequest', function () {
         expect(httpRequest.toString(), 'to equal', 'GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
     });
 
+    it('should accept encrypted as a parameter to the constructor', function () {
+        expect(new HttpRequest({encrypted: true}), 'to have properties', {encrypted: true});
+    });
+
     it('should accept the request line as an option to the constructor', function () {
         expect(new HttpRequest({requestLine: 'GET /foo HTTP/1.1'}), 'to have properties', {
             method: 'GET',
