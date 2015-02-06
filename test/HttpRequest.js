@@ -133,4 +133,10 @@ describe('HttpRequest', function () {
             httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nquux');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
+
+    it('should consider instances with different encrypted flags different', function () {
+        var httpRequest1 = new HttpRequest({encrypted: true}),
+            httpRequest2 = new HttpRequest({encrypted: false});
+        expect(httpRequest1.equals(httpRequest2), 'to be false');
+    });
 });
