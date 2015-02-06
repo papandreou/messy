@@ -7,3 +7,8 @@ Object model for HTTP messages (requests and responses) and RFC822 (mail).
 [![Build Status](https://travis-ci.org/papandreou/messy.png)](https://travis-ci.org/papandreou/messy)
 [![Coverage Status](https://coveralls.io/repos/papandreou/messy/badge.png)](https://coveralls.io/r/papandreou/messy)
 [![Dependency Status](https://david-dm.org/papandreou/messy.png)](https://david-dm.org/papandreou/messy)
+
+License
+-------
+
+Messy is licensed under a standard 3-clause BSD license -- see the `LICENSE` file for details.
