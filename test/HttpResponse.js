@@ -40,6 +40,13 @@ describe('HttpResponse', function () {
         });
     });
 
+    it('should parse a partial status line', function () {
+        expect(new HttpResponse('HTTP/1.1 200'), 'to have properties', {
+            protocol: 'HTTP/1.1',
+            statusCode: 200
+        });
+    });
+
     it('should only include CRLFCRLF when there are no headers', function () {
         expect(new HttpResponse({
             statusLine: 'HTTP/1.1 200 OK',

@@ -36,6 +36,13 @@ describe('HttpRequest', function () {
         });
     });
 
+    it('should parse a partial request line', function () {
+        expect(new HttpRequest('GET /foo'), 'to have properties', {
+            method: 'GET',
+            url: '/foo'
+        });
+    });
+
     it('should only include CRLFCRLF when there are no headers', function () {
         expect(new HttpRequest({
             requestLine: 'GET / HTTP/1.1',
