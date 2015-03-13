@@ -378,6 +378,41 @@ describe('Message', function () {
                 ])
             ).decodedBody, 'to equal', 'Abc ø\r\n');
         });
+
+        it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Transfer-Encoding: chunked\r\n' +
+                '\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '5\r\n' +
+                'pedia\r\n' +
+                'e\r\n' +
+                ' in\r\n\r\nchunks.\r\n' +
+                '0\r\n' +
+                '\r\n'
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
+
+        it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
+            expect(new Message(
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.\r\n' +
+                    '0\r\n' +
+                    '\r\n',
+                    'utf-8'
+                )
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
     });
 
     describe('#fileName', function () {
