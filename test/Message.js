@@ -415,6 +415,18 @@ describe('Message', function () {
         });
     });
 
+    describe('#rawSrc', function () {
+        it('should be populated when instiating a Message from a string', function () {
+            var rawSrc = 'Foo: bar\r\n\r\nquux';
+            expect(new Message(rawSrc).rawSrc, 'to equal', rawSrc);
+        });
+
+        it('should be populated when instiating a Message from a Buffer', function () {
+            var rawSrc = new Buffer('Foo: bar\r\n\r\nquux', 'utf-8');
+            expect(new Message(rawSrc).rawSrc, 'to equal', rawSrc);
+        });
+    });
+
     describe('#fileName', function () {
         describe('when invoked as a getter', function () {
             it('should decode the Content-Disposition filename', function () {
