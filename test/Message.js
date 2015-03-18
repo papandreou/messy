@@ -2,6 +2,10 @@
 var expect = require('unexpected'),
     Message = require('../lib/Message');
 
+it.skipIf = function (condition) {
+    (condition ? it.skip : it).apply(it, Array.prototype.slice.call(arguments, 1));
+};
+
 describe('Message', function () {
     it('should accept an options object with headers and body', function () {
         var message = new Message({
@@ -413,6 +417,17 @@ describe('Message', function () {
                 )
             ).body, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
         });
+
+        it.skipIf(!require('zlib').gunzipSync, 'should decode Content-Encoding:gzip', function () {
+            expect(new Message(Buffer.concat([
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Content-Encoding: gzip\r\n' +
+                    '\r\n', 'ascii'
+                ),
+                new Buffer([0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x4b, 0xcb, 0xcf, 0x4f, 0x4a, 0x2c, 0x02, 0x00, 0x95, 0x1f, 0xf6, 0x9e, 0x06, 0x00, 0x00, 0x00])
+            ])).body, 'to equal', 'foobar');
+        });
     });
 
     describe('#rawBody', function () {
@@ -460,6 +475,21 @@ describe('Message', function () {
             message.body = 'sarbarbarbab';
             expect(message.rawBody, 'to equal', new Buffer('c\r\nsarbarbarbab\r\n0\r\n\r\n'));
             expect(message.body, 'to equal', 'sarbarbarbab');
+        });
+
+        it.skipIf(!require('zlib').gzipSync, 'should be recomputed from the body if updated, with Content-Encoding:gzip', function () {
+            var message = new Message(Buffer.concat([
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Content-Encoding: gzip\r\n' +
+                    '\r\n', 'ascii'
+                ),
+                new Buffer([0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x4b, 0xcb, 0xcf, 0x4f, 0x4a, 0x2c, 0x02, 0x00, 0x95, 0x1f, 0xf6, 0x9e, 0x06, 0x00, 0x00, 0x00])
+            ]));
+            expect(message.body, 'to equal', 'foobar');
+            message.body = 'barfoo';
+            expect(message.rawBody, 'to equal', new Buffer([0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x4b, 0x4a, 0x2c, 0x4a, 0xcb, 0xcf, 0x07, 0x00, 0x2b, 0x85, 0xa8, 0xe2, 0x06, 0x00, 0x00, 0x00]));
+            expect(message.body, 'to equal', 'barfoo');
         });
     });
 
