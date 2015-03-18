@@ -303,14 +303,14 @@ describe('Message', function () {
         });
     });
 
-    describe('#decodedBody', function () {
+    describe('#body', function () {
         it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a string', function () {
             expect(new Message(
                 'Content-Type: text/plain; charset=UTF-8\r\n' +
                 'Content-Transfer-Encoding: base64\r\n' +
                 '\r\n' +
                 'Zm9v\r\n'
-            ).decodedBody, 'to equal', 'foo');
+            ).body, 'to equal', 'foo');
         });
 
         it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a Buffer', function () {
@@ -319,7 +319,7 @@ describe('Message', function () {
                 'Content-Transfer-Encoding: base64\r\n' +
                 '\r\n' +
                 'Zm9v\r\n')
-            ).decodedBody, 'to equal', 'foo');
+            ).body, 'to equal', 'foo');
         });
 
         it('should decode a base64 body to a Buffer when the Content-Transfer-Encoding is base64 and the Content-Type is not textual', function () {
@@ -328,7 +328,7 @@ describe('Message', function () {
                 'Content-Transfer-Encoding: base64\r\n' +
                 '\r\n' +
                 'Zm9v\r\n'
-            ).decodedBody, 'to equal', new Buffer('foo'));
+            ).body, 'to equal', new Buffer('foo'));
         });
 
         it('should decode quoted-printable when the Content-Transfer-Encoding header says so', function () {
@@ -337,7 +337,7 @@ describe('Message', function () {
                 'Content-Transfer-Encoding: quoted-printable\r\n' +
                 '\r\n' +
                 'Abc =C3=A6=C3=B8=C3=A5\r\n'
-            ).decodedBody, 'to equal', 'Abc æøå\r\n');
+            ).body, 'to equal', 'Abc æøå\r\n');
         });
 
         it('should not break if the Content-Transfer-Encoding is unsupported', function () {
@@ -346,7 +346,7 @@ describe('Message', function () {
                 'Content-Transfer-Encoding: foo\r\n' +
                 '\r\n' +
                 'Zm9v\r\n'
-            ).decodedBody, 'to equal', 'Zm9v\r\n');
+            ).body, 'to equal', 'Zm9v\r\n');
         });
 
         it('should support quoted-printable with iso-8859-1', function () {
@@ -355,7 +355,7 @@ describe('Message', function () {
                 'Content-Transfer-Encoding: quoted-printable\r\n' +
                 '\r\n' +
                 'Abc =F8\r\n'
-            ).decodedBody, 'to equal', 'Abc ø\r\n');
+            ).body, 'to equal', 'Abc ø\r\n');
         });
 
         it('should provide a decoded body when the body is already given as a string with no Content-Transfer-Encoding, even when a charset is defined', function () {
@@ -363,7 +363,7 @@ describe('Message', function () {
                 'Content-Type: text/plain; charset=UTF-8\r\n' +
                 '\r\n' +
                 'Abcdef\r\n'
-            ).decodedBody, 'to equal', 'Abcdef\r\n');
+            ).body, 'to equal', 'Abcdef\r\n');
         });
 
         it('should support quoted-printable with no Content-Transfer-Encoding', function () {
@@ -376,7 +376,7 @@ describe('Message', function () {
                     new Buffer([0xf8]),
                     new Buffer('\r\n')
                 ])
-            ).decodedBody, 'to equal', 'Abc ø\r\n');
+            ).body, 'to equal', 'Abc ø\r\n');
         });
 
         it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
@@ -392,7 +392,7 @@ describe('Message', function () {
                 ' in\r\n\r\nchunks.\r\n' +
                 '0\r\n' +
                 '\r\n'
-            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+            ).body, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
         });
 
         it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
@@ -411,19 +411,55 @@ describe('Message', function () {
                     '\r\n',
                     'utf-8'
                 )
-            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+            ).body, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
         });
     });
 
-    describe('#rawSrc', function () {
-        it('should be populated when instiating a Message from a string', function () {
-            var rawSrc = 'Foo: bar\r\n\r\nquux';
-            expect(new Message(rawSrc).rawSrc, 'to equal', rawSrc);
+    describe('#rawBody', function () {
+        it('should be populated when instantiating a Message from a string', function () {
+            var rawBody = 'Foo: bar\r\n\r\nquux';
+            expect(new Message(rawBody).rawBody, 'to equal', 'quux');
         });
 
-        it('should be populated when instiating a Message from a Buffer', function () {
-            var rawSrc = new Buffer('Foo: bar\r\n\r\nquux', 'utf-8');
-            expect(new Message(rawSrc).rawSrc, 'to equal', rawSrc);
+        it('should be populated when instantiating a Message from a Buffer', function () {
+            var rawBody = new Buffer('Foo: bar\r\n\r\nquux', 'utf-8');
+            expect(new Message(rawBody).rawBody, 'to equal', new Buffer('quux', 'utf-8'));
+        });
+
+        it('should be recomputed from the body if updated, with Content-Transfer-Encoding', function () {
+            var message = new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\nZm9vYmFy'
+            );
+            expect(message.rawBody, 'to equal', 'Zm9vYmFy');
+            expect(message.body, 'to equal', 'foobar');
+            message.body = 'quux';
+            expect(message.rawBody, 'to equal', 'cXV1eA==');
+        });
+
+        it('should be recomputed from the body if updated, with quoted-printable and a charset', function () {
+            var message = new Message(
+                'Content-Type: text/plain; charset=iso-8859-1\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\nF=E6'
+            );
+            expect(message.rawBody, 'to equal', 'F=E6');
+            expect(message.body, 'to equal', 'Fæ');
+            message.body = 'øh';
+            expect(message.rawBody, 'to equal', '=F8h');
+        });
+
+        it('should be recomputed from the body if updated, with transfer-encoding: chunked', function () {
+            var message = new Message(
+                'Content-Type: text/plain; charset=utf-8\r\n' +
+                'Transfer-Encoding: chunked\r\n\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '0\r\n' +
+                '\r\n'
+            );
+            expect(message.rawBody, 'to equal', '4\r\nWiki\r\n0\r\n\r\n');
+            expect(message.body, 'to equal', 'Wiki');
+            message.body = 'sarbarbarbab';
+            expect(message.rawBody, 'to equal', new Buffer('c\r\nsarbarbarbab\r\n0\r\n\r\n'));
+            expect(message.body, 'to equal', 'sarbarbarbab');
         });
     });
 
