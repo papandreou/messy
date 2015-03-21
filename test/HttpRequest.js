@@ -146,4 +146,17 @@ describe('HttpRequest', function () {
             httpRequest2 = new HttpRequest({encrypted: false});
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
+
+    it('should parse a buffer', function () {
+        var rawSrc =
+            'POST / HTTP/1.1\r\n' +
+            'Date: Sat, 21 Mar 2015 00:25:45 GMT\r\n' +
+            'Connection: keep-alive\r\n' +
+            '\r\n' +
+            'blah';
+
+        var httpRequest = new HttpRequest(new Buffer(rawSrc, 'ascii'));
+
+        expect(httpRequest.toString(), 'to equal', rawSrc);
+    });
 });

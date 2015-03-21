@@ -131,4 +131,21 @@ describe('HttpResponse', function () {
             httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nquux');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
+
+    it('should parse a buffer', function () {
+        var rawSrc =
+            'HTTP/1.1 200 OK\r\n' +
+            'X-Powered-By: Express\r\n' +
+            'Content-Type: text/plain\r\n' +
+            'Content-Length: 4\r\n' +
+            'ETag: "-836148900"\r\n' +
+            'Date: Sat, 21 Mar 2015 00:25:45 GMT\r\n' +
+            'Connection: keep-alive\r\n' +
+            '\r\n' +
+            'blah';
+
+        var httpResponse = new HttpResponse(new Buffer(rawSrc, 'ascii'));
+
+        expect(httpResponse.toString(), 'to equal', rawSrc);
+    });
 });
