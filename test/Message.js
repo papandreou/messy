@@ -196,6 +196,20 @@ describe('Message', function () {
         });
     });
 
+    describe('with a JSON body', function () {
+        it('should provide a parsed body (and default to utf-8)', function () {
+            expect(new Message(new Buffer('Content-Type: application/json\n\n{"foo":"æøå"}', 'utf-8')).body, 'to equal', {
+                foo: 'æøå'
+            });
+        });
+
+        it('should reserialize the body as utf-8', function () {
+            var message = new Message(new Buffer('Content-Type: application/json\n\n{"foo":"æøå"}', 'utf-8'));
+            message.body = { foo: '☺' };
+            expect(message.rawBody, 'to equal', new Buffer('{"foo":"☺"}', 'utf-8'));
+        });
+    });
+
     describe('with a multipart body', function () {
         var src =
             'Content-Type: multipart/form-data;\r\n' +
