@@ -335,7 +335,7 @@ describe('Message', function () {
                 ' in\r\n\r\nchunks.\r\n' +
                 '0\r\n' +
                 '\r\n'
-            ).unchunkedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.')
+            ).unchunkedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
         });
 
         it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
