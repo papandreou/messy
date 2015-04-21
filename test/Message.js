@@ -208,6 +208,21 @@ describe('Message', function () {
             message.body = { foo: '☺' };
             expect(message.rawBody, 'to equal', new Buffer('{"foo":"☺"}', 'utf-8'));
         });
+
+        describe('with an application/json body that does not parse as JSON', function () {
+            var message = new Message({
+                headers: { 'Content-Type': 'application/json' },
+                unchunkedBody: '!!=!='
+            });
+
+            it('should leave unchunkedBody as-is', function () {
+                expect(message.unchunkedBody, 'to equal', '!!=!=');
+            });
+
+            it('should provide body as a string', function () {
+                expect(message.body, 'to equal', '!!=!=');
+            });
+        });
     });
 
     describe('with a multipart body', function () {
