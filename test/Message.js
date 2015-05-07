@@ -528,6 +528,11 @@ describe('Message', function () {
                 new Buffer([0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x4b, 0xcb, 0xcf, 0x4f, 0x4a, 0x2c, 0x02, 0x00, 0x95, 0x1f, 0xf6, 0x9e, 0x06, 0x00, 0x00, 0x00])
             ])).body, 'to equal', 'foobar');
         });
+
+        it('should decode application/x-www-form-urlencoded as text', function () {
+            var src = new Buffer('Content-Type: application/x-www-form-urlencoded\n\nfoo=bar&data=%5B%22foo.txt%22%5D', 'ascii');
+            expect(new Message(src).body, 'to equal', 'foo=bar&data=%5B%22foo.txt%22%5D');
+        });
     });
 
     describe('#rawBody', function () {
