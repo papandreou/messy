@@ -40,6 +40,12 @@ describe('HttpResponse', function () {
         });
     });
 
+    it('should accept a number and interpret it as the status code', function () {
+        expect(new HttpResponse(404), 'to have properties', {
+            statusCode: 404
+        });
+    });
+
     it('should parse a partial status line', function () {
         expect(new HttpResponse('HTTP/1.1 200'), 'to have properties', {
             protocol: 'HTTP/1.1',
