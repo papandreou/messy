@@ -159,4 +159,63 @@ describe('HttpRequest', function () {
 
         expect(httpRequest.toString(), 'to equal', rawSrc);
     });
+
+    describe('without a verb in the request line', function () {
+        it('should assume GET', function () {
+            expect(new HttpRequest('/foo'), 'to satisfy', {
+                method: 'GET',
+                path: '/foo'
+            });
+        });
+    });
+
+    describe('with a url passed in the request line', function () {
+        it('should set the Host header', function () {
+            var httpRequest = new HttpRequest('GET http://foo.com/');
+            expect(httpRequest.headers.get('Host'), 'to equal', 'foo.com');
+        });
+
+        it('should set the host property', function () {
+            expect(new HttpRequest('GET http://foo.com/').host, 'to equal', 'foo.com');
+        });
+
+        it('should set the port property when explicitly given', function () {
+            expect(new HttpRequest('GET http://foo.com:987/').port, 'to equal', 987);
+        });
+
+        it('should set the port property to 80 when http', function () {
+            expect(new HttpRequest('GET http://foo.com/').port, 'to equal', 80);
+        });
+
+        it('should set the port property to 443 when https', function () {
+            expect(new HttpRequest('GET https://foo.com/').port, 'to equal', 443);
+        });
+
+        it('should set the path', function () {
+            expect(new HttpRequest('GET http://foo.com/heythere/you').path, 'to equal', '/heythere/you');
+        });
+
+        it('should set the Host header and include the port if given', function () {
+            var httpRequest = new HttpRequest('GET http://foo.com:987/');
+            expect(httpRequest.headers.get('Host'), 'to equal', 'foo.com:987');
+        });
+
+        it('should not overwrite an explicit Host header', function () {
+            var httpRequest = new HttpRequest('GET http://foo.com/\r\nHost: bar.com');
+            expect(httpRequest.headers.get('Host'), 'to equal', 'bar.com');
+        });
+
+        it('should set the "encrypted" property if the protocol is https', function () {
+            expect(new HttpRequest('GET https://foo.com/'), 'to satisfy', { encrypted: true });
+        });
+
+        it('should not set the "encrypted" property if the protocol is http', function () {
+            expect(new HttpRequest('GET http://foo.com/'), 'to satisfy', { encrypted: expect.it('to be falsy') });
+        });
+
+        it('should set the Authorization header if credentials are passed in the url', function () {
+            var httpRequest = new HttpRequest('GET https://foo:bar@foo.com/');
+            expect(httpRequest.headers.get('Authorization'), 'to equal', 'Basic Zm9vOmJhcg==');
+        });
+    });
 });
