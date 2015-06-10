@@ -16,7 +16,7 @@ describe('HttpConversation', function () {
             ]
         });
 
-        expect(httpConversation.exchanges, 'to be a non-empty array whose items satisfy', 'to be an', HttpExchange);
+        expect(httpConversation.exchanges, 'to have items satisfying', 'to be an', HttpExchange);
         expect(
             httpConversation.toString(),
             'to equal',
