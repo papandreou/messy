@@ -166,6 +166,11 @@ describe('Message', function () {
         expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body\ufffd\ufffd');
     });
 
+    it('should treat a body passed as a Buffer as the unchunked body', function () {
+        var message = new Message({ body: new Buffer([0xff]) });
+        expect(message._unchunkedBody, 'to equal', new Buffer([0xff]));
+    });
+
     describe('#hasEmptyBody', function () {
         it('should consider a zero length Buffer to be an empty body', function () {
             expect(new Message({body: new Buffer([])}).hasEmptyBody(), 'to be true');
