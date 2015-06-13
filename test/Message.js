@@ -230,6 +230,79 @@ describe('Message', function () {
         });
     });
 
+    describe('with parts passed to the constructor', function () {
+        it('should accept both messy.Message instances and valid constructor arguments ', function () {
+            var message = new Message({
+                headers: 'Content-Type: multipart/mixed',
+                parts: [
+                    new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>'),
+                    { headers: 'Content-Type: text/plain', body: 'Hello, world!' },
+                    'Content-Type: text/foo\r\n\r\nhey'
+                ]
+            });
+            expect(message.parts.length, 'to equal', 3);
+            expect(
+                message.toString(),
+                'to equal',
+                'Content-Type: multipart/mixed\r\n' +
+                '\r\n' +
+                '--\r\n' +
+                'Content-Type: text/html\r\n' +
+                '\r\n' +
+                '<h1>Hello, world!</h1>\r\n' +
+                '--\r\n' +
+                'Content-Type: text/plain\r\n' +
+                '\r\n' +
+                'Hello, world!\r\n' +
+                '--\r\n' +
+                'Content-Type: text/foo\r\n' +
+                '\r\n' +
+                'hey\r\n' +
+                '----\r\n'
+            );
+        });
+
+        it('should pick up the boundary with boundary', function () {
+            var message = new Message({
+                headers: 'Content-Type: multipart/mixed; boundary=foo',
+                parts: [
+                    new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>')
+                ]
+            });
+            expect(message.parts.length, 'to equal', 1);
+            expect(
+                message.toString(),
+                'to equal',
+                'Content-Type: multipart/mixed; boundary=foo\r\n' +
+                '\r\n' +
+                '--foo\r\n' +
+                'Content-Type: text/html\r\n' +
+                '\r\n' +
+                '<h1>Hello, world!</h1>\r\n' +
+                '--foo--\r\n'
+            );
+        });
+
+        it('should allow passing a single part', function () {
+            var message = new Message({
+                headers: 'Content-Type: multipart/mixed; boundary=foo',
+                parts: new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>')
+            });
+            expect(message.parts.length, 'to equal', 1);
+            expect(
+                message.toString(),
+                'to equal',
+                'Content-Type: multipart/mixed; boundary=foo\r\n' +
+                '\r\n' +
+                '--foo\r\n' +
+                'Content-Type: text/html\r\n' +
+                '\r\n' +
+                '<h1>Hello, world!</h1>\r\n' +
+                '--foo--\r\n'
+            );
+        });
+    });
+
     describe('with a multipart body', function () {
         var src =
             'Content-Type: multipart/form-data;\r\n' +
