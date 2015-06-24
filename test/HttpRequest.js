@@ -177,6 +177,13 @@ describe('HttpRequest', function () {
     });
 
     describe('with a url passed in the request line', function () {
+        it('should support a localhost url', function () {
+            var httpRequest = new HttpRequest('GET http://localhost:3000/');
+            expect(httpRequest.headers.get('Host'), 'to equal', 'localhost:3000');
+            expect(httpRequest.host, 'to equal', 'localhost');
+            expect(httpRequest.port, 'to equal', 3000);
+        });
+
         it('should set the Host header', function () {
             var httpRequest = new HttpRequest('GET http://foo.com/');
             expect(httpRequest.headers.get('Host'), 'to equal', 'foo.com');
