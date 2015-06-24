@@ -184,6 +184,12 @@ describe('HttpRequest', function () {
             expect(httpRequest.port, 'to equal', 3000);
         });
 
+        it('should support a url with an IP address', function () {
+            var httpRequest = new HttpRequest('GET http://99.88.77.66/');
+            expect(httpRequest.headers.get('Host'), 'to equal', '99.88.77.66');
+            expect(httpRequest.host, 'to equal', '99.88.77.66');
+        });
+
         it('should set the Host header', function () {
             var httpRequest = new HttpRequest('GET http://foo.com/');
             expect(httpRequest.headers.get('Host'), 'to equal', 'foo.com');
