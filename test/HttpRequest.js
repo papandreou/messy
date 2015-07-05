@@ -176,6 +176,10 @@ describe('HttpRequest', function () {
         });
     });
 
+    it('should leave host and port as undefined when not given', function () {
+        expect(new HttpRequest('GET /').port, 'to be undefined');
+    });
+
     describe('with a url passed in the request line', function () {
         it('should support a localhost url', function () {
             var httpRequest = new HttpRequest('GET http://localhost:3000/');
