@@ -292,4 +292,19 @@ describe('HttpRequest', function () {
             expect(httpRequest.headers.get('Authorization'), 'to equal', 'Basic Zm9vOmJhcg==');
         });
     });
+
+    describe('#toJSON', function () {
+        it('should include the messy.Message properties and put the requestLine properties at the top level', function () {
+            expect(new HttpRequest('GET / HTTP/1.1\r\nFoo: bar\r\n\r\nblabla').toJSON(), 'to equal', {
+                method: 'GET',
+                url: '/',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
+                headers: {
+                    Foo: 'bar'
+                },
+                rawBody: 'blabla'
+            });
+        });
+    });
 });

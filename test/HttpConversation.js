@@ -135,4 +135,68 @@ describe('HttpConversation', function () {
         expect(httpConversation1.equals(httpConversation2), 'to be false');
         expect(httpConversation1.toString(), 'not to equal', httpConversation2.toString());
     });
+
+    describe('#toJSON', function () {
+        it('should return an object with the exchanges JSONified', function () {
+            expect(new HttpConversation({
+                exchanges: [
+                    {
+                        request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
+                        response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
+                    },
+                    {
+                        request: new HttpRequest('GET /foo HTTP/1.1\nFoo: Barrr\n\nblahhh'),
+                        response: new HttpResponse('HTTP/1.1 412 Precondition Failed\nQuux: Bazzz\n\nblafff')
+                    }
+                ]
+            }).toJSON(), 'to equal', {
+                exchanges: [
+                    {
+                        request: {
+                            method: 'GET',
+                            url: '/',
+                            protocolName: 'HTTP',
+                            protocolVersion: '1.1',
+                            headers: {
+                                Foo: 'Bar'
+                            },
+                            rawBody: 'blah'
+                        },
+                        response: {
+                            statusCode: 200,
+                            statusMessage: 'OK',
+                            protocolName: 'HTTP',
+                            protocolVersion: '1.1',
+                            headers: {
+                                Quux: 'Baz'
+                            },
+                            rawBody: 'blaf'
+                        }
+                    },
+                    {
+                        request: {
+                            method: 'GET',
+                            url: '/foo',
+                            protocolName: 'HTTP',
+                            protocolVersion: '1.1',
+                            headers: {
+                                Foo: 'Barrr'
+                            },
+                            rawBody: 'blahhh'
+                        },
+                        response: {
+                            statusCode: 412,
+                            statusMessage: 'Precondition Failed',
+                            protocolName: 'HTTP',
+                            protocolVersion: '1.1',
+                            headers: {
+                                Quux: 'Bazzz'
+                            },
+                            rawBody: 'blafff'
+                        }
+                    }
+                ]
+            });
+        });
+    });
 });

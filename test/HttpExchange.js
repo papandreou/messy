@@ -116,4 +116,47 @@ describe('HttpExchange', function () {
         expect(httpExchange1.equals(httpExchange2), 'to be false');
         expect(httpExchange1.toString(), 'not to equal', httpExchange2.toString());
     });
+
+    describe('#toJSON', function () {
+        it('should return an object with the request and response JSONified', function () {
+            expect(new HttpExchange({
+                request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
+                response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
+            }).toJSON(), 'to equal', {
+                request: {
+                    method: 'GET',
+                    url: '/',
+                    protocolName: 'HTTP',
+                    protocolVersion: '1.1',
+                    headers: {
+                        Foo: 'Bar'
+                    },
+                    rawBody: 'blah'
+                },
+                response: {
+                    statusCode: 200,
+                    statusMessage: 'OK',
+                    protocolName: 'HTTP',
+                    protocolVersion: '1.1',
+                    headers: {
+                        Quux: 'Baz'
+                    },
+                    rawBody: 'blaf'
+                }
+            });
+        });
+
+        // Makes it possible to use statusLine.toJSON() as the RHS of a 'to satisfy' assertion in Unexpected
+        // where undefined means that the property must not be present:
+        it('should not include the keys that have undefined values', function () {
+            var httpExchange = new HttpExchange({
+                request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
+                response: undefined
+            });
+
+            httpExchange.request = undefined;
+
+            expect(httpExchange.toJSON(), 'not to have keys', ['request', 'response']);
+        });
+    });
 });

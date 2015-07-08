@@ -232,4 +232,14 @@ describe('Headers', function () {
             });
         });
     });
+
+    describe('#toJSON', function () {
+        it('should output a single-value header as a string', function () {
+            expect(new Headers('Foo: bar').toJSON(), 'to equal', { Foo: 'bar' });
+        });
+
+        it('should output a multi-value header as an array of strings', function () {
+            expect(new Headers('Foo: bar\r\nFoo: quux').toJSON(), 'to equal', { Foo: [ 'bar', 'quux' ] });
+        });
+    });
 });

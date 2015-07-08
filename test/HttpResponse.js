@@ -154,4 +154,19 @@ describe('HttpResponse', function () {
 
         expect(httpResponse.toString(), 'to equal', rawSrc);
     });
+
+    describe('#toJSON', function () {
+        it('should include the messy.Message properties and put the statusLine properties at the top level', function () {
+            expect(new HttpResponse('HTTP/1.1 200 OK\r\nFoo: bar\r\n\r\nblabla').toJSON(), 'to equal', {
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
+                statusCode: 200,
+                statusMessage: 'OK',
+                headers: {
+                    Foo: 'bar'
+                },
+                rawBody: 'blabla'
+            });
+        });
+    });
 });

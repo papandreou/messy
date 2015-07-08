@@ -744,4 +744,87 @@ describe('Message', function () {
             });
         });
     });
+
+    describe('#toJSON', function () {
+        it('should include headers if any are present', function () {
+            expect(new Message('Foo: bar').toJSON(), 'to equal', {
+                headers: {
+                    Foo: 'bar'
+                }
+            });
+        });
+
+        it('should not include an empty headers object', function () {
+            expect(new Message('\r\nhey').toJSON(), 'to equal', {
+                rawBody: 'hey'
+            });
+        });
+
+        it('should include the parsed representation of the body if it has been touched', function () {
+            var message = new Message('Content-type: application/json\r\n\r\n{"foo":"bar"}');
+            message.body.blah = 123;
+            expect(message.toJSON(), 'to equal', {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    foo: 'bar',
+                    blah: 123
+                }
+            });
+        });
+
+        describe('with a multipart message', function () {
+            it('should not include the parts if they have not been touched', function () {
+                expect(new Message(
+                    'Content-Type: multipart/mixed; boundary=foo\r\n' +
+                    '\r\n' +
+                    '--foo\r\n' +
+                    'Content-Type: text/html; charset=UTF-8\r\n' +
+                    '\r\n' +
+                    '<h1>Hello, world!</h1>\r\n' +
+                    '--foo--\r\n'
+                ).toJSON(), 'to equal', {
+                    headers: {
+                        'Content-Type': 'multipart/mixed; boundary=foo'
+                    },
+                    rawBody:
+                        '--foo\r\n' +
+                        'Content-Type: text/html; charset=UTF-8\r\n' +
+                        '\r\n' +
+                        '<h1>Hello, world!</h1>\r\n' +
+                        '--foo--\r\n'
+                });
+            });
+        });
+
+        it('should include parts if they have been touched', function () {
+            var message = new Message(
+                'Content-Type: multipart/mixed; boundary=foo\r\n' +
+                '\r\n' +
+                '--foo\r\n' +
+                'Content-Type: text/html; charset=UTF-8\r\n' +
+                '\r\n' +
+                '<h1>Hello, world!</h1>\r\n' +
+                '--foo--\r\n'
+            );
+
+            message.parts[0].headers.set('Hey', 'there');
+
+            expect(message.toJSON(), 'to equal', {
+                headers: {
+                    'Content-Type': 'multipart/mixed; boundary=foo'
+                },
+                parts: [
+                    {
+                        headers: {
+                            'Content-Type': 'text/html; charset=UTF-8',
+                            Hey: 'there'
+                        },
+                        rawBody: '<h1>Hello, world!</h1>'
+                    }
+                ]
+            });
+        });
+    });
 });
