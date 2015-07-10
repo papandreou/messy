@@ -220,13 +220,11 @@ describe('HttpRequest', function () {
         });
 
         it('should set the Host header and include the port if given', function () {
-            var httpRequest = new HttpRequest('GET http://foo.com:987/');
-            expect(httpRequest.headers.get('Host'), 'to equal', 'foo.com:987');
+            expect(new HttpRequest('GET http://foo.com:987/').headers.get('Host'), 'to equal', 'foo.com:987');
         });
 
         it('should not overwrite an explicit Host header', function () {
-            var httpRequest = new HttpRequest('GET http://foo.com/\r\nHost: bar.com');
-            expect(httpRequest.headers.get('Host'), 'to equal', 'bar.com');
+            expect(new HttpRequest('GET http://foo.com/\r\nHost: bar.com').headers.getAll('Host'), 'to equal', [ 'bar.com' ]);
         });
 
         it('should set the "encrypted" property if the protocol is https', function () {
