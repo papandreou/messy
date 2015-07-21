@@ -235,9 +235,43 @@ describe('HttpRequest', function () {
             expect(new HttpRequest('GET http://foo.com/'), 'to satisfy', { encrypted: expect.it('to be falsy') });
         });
 
-        it('should set the Authorization header if credentials are passed in the url', function () {
-            var httpRequest = new HttpRequest('GET https://foo:bar@foo.com/');
-            expect(httpRequest.headers.get('Authorization'), 'to equal', 'Basic Zm9vOmJhcg==');
+        describe('with credentials passed in the url', function () {
+            it('should set the Authorization header', function () {
+                expect(
+                    new HttpRequest('GET https://foo:bar@foo.com/').headers.get('Authorization'),
+                    'to equal',
+                    'Basic Zm9vOmJhcg=='
+                );
+            });
+
+            it('should not overwrite an existing Authorization header', function () {
+                expect(
+                    new HttpRequest({
+                        url: 'GET https://foo:bar@foo.com/',
+                        headers: {
+                            Authorization: 'foobar'
+                        }
+                    }).headers.get('Authorization'),
+                    'to equal',
+                    'foobar'
+                );
+            });
+
+            it('should support percent-encoded octets, including colons, and a non-encoded colon in the password', function () {
+                expect(
+                    new HttpRequest('GET http://fo%C3%A6o%25bar:baz%25quux:yadda@localhost:4232/').headers.get('Authorization'),
+                    'to equal',
+                    'Basic Zm/Dpm8lYmFyOmJheiVxdXV4OnlhZGRh'
+                );
+            });
+
+            it('should leave all percent encoded octets in the username if one of them does not decode as UTF-8', function () {
+                expect(
+                    new HttpRequest('http://fo%C3%A6o%25bar%C3:baz%C3%A6quux:yadda@localhost:4232/').headers.get('Authorization'),
+                    'to equal',
+                    'Basic Zm8lQzMlQTZvJTI1YmFyJUMzOmJhesOmcXV1eDp5YWRkYQ=='
+                );
+            });
         });
     });
 
