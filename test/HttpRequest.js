@@ -185,6 +185,14 @@ describe('HttpRequest', function () {
             expect(new HttpRequest('GET https://localhost:3000/foo?bar=quux').url, 'to equal', 'https://localhost:3000/foo?bar=quux');
         });
 
+        it('should include the default http port explicitly', function () {
+            expect(new HttpRequest('GET http://localhost/').url, 'to equal', 'http://localhost/');
+        });
+
+        it('should include the default https port explicitly', function () {
+            expect(new HttpRequest('GET https://localhost/').url, 'to equal', 'https://localhost/');
+        });
+
         it('should include the username and password if available', function () {
             expect(new HttpRequest('GET http://foo:bar@localhost:3000/').url, 'to equal', 'http://foo:bar@localhost:3000/');
         });
