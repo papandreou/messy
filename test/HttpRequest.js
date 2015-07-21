@@ -180,6 +180,16 @@ describe('HttpRequest', function () {
         expect(new HttpRequest('GET /').port, 'to be undefined');
     });
 
+    describe('#url', function () {
+        it('should include the schema, host, port, path, and search if available', function () {
+            expect(new HttpRequest('GET https://localhost:3000/foo?bar=quux').url, 'to equal', 'https://localhost:3000/foo?bar=quux');
+        });
+
+        it('should include the username and password if available', function () {
+            expect(new HttpRequest('GET http://foo:bar@localhost:3000/').url, 'to equal', 'http://foo:bar@localhost:3000/');
+        });
+    });
+
     describe('with a url passed in the request line', function () {
         it('should support a localhost url', function () {
             var httpRequest = new HttpRequest('GET http://localhost:3000/');
