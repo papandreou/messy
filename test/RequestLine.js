@@ -3,6 +3,16 @@ var expect = require('unexpected'),
     RequestLine = require('../lib/RequestLine');
 
 describe('RequestLine', function () {
+    it('should add a leading slash to the url if not specified', function () {
+        expect(new RequestLine('GET foo').url, 'to equal', '/foo');
+    });
+
+    describe('#toString', function () {
+        it('should omit an undefined protocol', function () {
+            expect(new RequestLine('GET /').toString(), 'to equal', 'GET /');
+        });
+    });
+
     describe('#toJSON', function () {
         it('should return non-computed properties', function () {
             expect(new RequestLine('GET / HTTP/1.1').toJSON(), 'to equal', {

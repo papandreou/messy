@@ -11,6 +11,12 @@ describe('HttpRequest', function () {
         expect(httpRequest.toString(), 'to equal', 'GET /foo HTTP/1.1\r\n');
     });
 
+    it('should add a leading slash to the request url if not specified', function () {
+        var httpRequest = new HttpRequest('GET foo');
+        expect(httpRequest.method, 'to equal', 'GET');
+        expect(httpRequest.url, 'to equal', '/foo');
+    });
+
     it('should parse a request line followed by headers', function () {
         var httpRequest = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n');
         expect(httpRequest.url, 'to equal', '/foo');
