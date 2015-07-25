@@ -235,6 +235,28 @@ describe('HttpRequest', function () {
             expect(httpRequest.port, 'to equal', 3000);
         });
 
+        it('should allow passing the same host in the host property and in the url', function () {
+            var httpRequest = new HttpRequest({ url: 'GET http://localhost:3000/', host: 'localhost' });
+            expect(httpRequest.host, 'to equal', 'localhost');
+        });
+
+        it('should throw if different hosts are passed in the host property and in the url', function () {
+            expect(function () {
+                new HttpRequest({ url: 'GET http://blabla.com:3000/', host: 'localhost' });
+            }, 'to throw', 'the host property and the url specify different hosts, localhost vs. blabla.com');
+        });
+
+        it('should allow passing the same port in the port property and in the url', function () {
+            var httpRequest = new HttpRequest({ url: 'GET http://localhost:3000/', port: 3000 });
+            expect(httpRequest.port, 'to equal', 3000);
+        });
+
+        it('should throw if different ports are passed in the port property and in the url', function () {
+            expect(function () {
+                new HttpRequest({ url: 'GET http://blabla.com:3000/', port: 3020 });
+            }, 'to throw', 'the port property and the url specify different ports, 3020 vs. 3000');
+        });
+
         it('should support a url with an IP address', function () {
             var httpRequest = new HttpRequest('GET http://99.88.77.66/');
             expect(httpRequest.headers.get('Host'), 'to equal', '99.88.77.66');
