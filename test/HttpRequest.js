@@ -296,6 +296,10 @@ describe('HttpRequest', function () {
             expect(new HttpRequest('GET http://foo.com/\r\nHost: bar.com').headers.getAll('Host'), 'to equal', [ 'bar.com' ]);
         });
 
+        it('should still set the host property when there is an explicit Host header', function () {
+            expect(new HttpRequest('GET http://foo.com/\r\nHost: bar.com'), 'to have property', 'host', 'foo.com');
+        });
+
         it('should set the "encrypted" property if the protocol is https', function () {
             expect(new HttpRequest('GET https://foo.com/'), 'to satisfy', { encrypted: true });
         });
