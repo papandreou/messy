@@ -396,6 +396,11 @@ describe('HttpRequest', function () {
             var httpRequest = new HttpRequest({ url: 'GET https://foo:bar@foo.com/' });
             expect(httpRequest.headers.get('Authorization'), 'to equal', 'Basic Zm9vOmJhcg==');
         });
+
+        it('should keep the Authorization header when no credentials are passed in the url', function () {
+            var httpRequest = new HttpRequest({ url: 'GET http://localhost:36033/', headers: { Authorization: 'foobar' } } );
+            expect(httpRequest.headers.get('Authorization'), 'to equal', 'foobar');
+        });
     });
 
     describe('#toJSON', function () {
