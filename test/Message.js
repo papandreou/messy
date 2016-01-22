@@ -462,6 +462,18 @@ describe('Message', function () {
                 'e\r\n' +
                 ' in\r\n\r\nchunks.'
             ).unchunkedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Transfer-Encoding: chunked\r\n' +
+                '\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '5\r\n' +
+                'pedia\r\n' +
+                'e\r\n' +
+                ' in\r\n\r\nchunks.\r\n'
+            ).unchunkedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
         });
 
         it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function () {
@@ -476,6 +488,21 @@ describe('Message', function () {
                     'pedia\r\n' +
                     'e\r\n' +
                     ' in\r\n\r\nchunks.',
+                    'utf-8'
+                )
+            ).unchunkedBody, 'to equal', new Buffer('Wikipedia in\r\n\r\nchunks.', 'utf-8'));
+
+            expect(new Message(
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.\r\n',
                     'utf-8'
                 )
             ).unchunkedBody, 'to equal', new Buffer('Wikipedia in\r\n\r\nchunks.', 'utf-8'));
