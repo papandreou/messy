@@ -885,4 +885,19 @@ describe('Message', function () {
             });
         });
     });
+
+    it('should support passing a JSON body as an object despite a non-JSON Content-Type', function () {
+        expect(new Message({
+            headers: {
+                'Content-Type': 'application/octet-stream'
+            },
+            body: {
+                foo: 123
+            }
+        }).toString(), 'to equal',
+            'Content-Type: application/octet-stream\r\n' +
+            '\r\n' +
+            '{"foo":123}'
+        );
+    });
 });
