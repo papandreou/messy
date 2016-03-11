@@ -146,6 +146,18 @@ describe('Headers', function () {
             headers.set('foo', ['hey']);
             expect(headers.toString(), 'to equal', 'Foo: hey\r\n');
         });
+
+        describe('when passed an object', function () {
+            it('should act as a shorthand for calling set with each (key, value)', function () {
+                var headers = new Headers({foo: 'bar', baz: 'quux'});
+                headers.set({
+                    foo: [ 'bar2' ],
+                    baz: 'quux2',
+                    yadda: 'blah'
+                });
+                expect(headers.toString(), 'to equal', 'Foo: bar2\r\nBaz: quux\r\nBaz: quux2\r\nYadda: blah\r\n');
+            });
+        });
     });
 
     describe('#parameter()', function () {
