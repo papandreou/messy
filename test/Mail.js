@@ -11,7 +11,7 @@ describe('Mail', function () {
     it('should rfc2047 encode when serializing', function () {
         var mail = new Mail({body: 'bar'});
         mail.headers.set('subject', '¡Hola, señor!');
-        expect(mail.toString(), 'to equal', 'Subject: =?iso-8859-1?Q?=A1Hola=2C?= =?iso-8859-1?Q?_se=F1or!?=\r\n\r\nbar');
+        expect(mail.toString(), 'to equal', 'Subject: =?utf-8?Q?=C2=A1Hola=2C?= =?utf-8?Q?_se=C3=B1or!?=\r\n\r\nbar');
     });
 
     describe('#fileName', function () {
@@ -42,7 +42,7 @@ describe('Mail', function () {
                     mail.toString(),
                     'to equal',
                     // TODO: Would be better to emit 'Content-Type: image/png; name="=?iso-8859-1?Q?=E6=F8=E5.png?="\r\n' +
-                    'Content-Type: image/png; =?iso-8859-1?Q?name==E6=F8=E5?=.png\r\n' +
+                    'Content-Type: image/png; =?utf-8?Q?name=3D=C3=A6=C3=B8=C3=A5?=.png\r\n' +
                     'Content-Disposition: attachment;\r\n' +
                     " filename*=iso-8859-1''%E6%F8%E5%2E%70%6E%67\r\n"
                 );
