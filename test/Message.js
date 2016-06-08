@@ -208,6 +208,12 @@ describe('Message', function () {
             });
         });
 
+        it('should support a Content-Type that ends with +json', function () {
+            expect(new Message(new Buffer('Content-Type: foobar+json; charset=UTF-8\n\n{"foo":"æøå"}', 'utf-8')).body, 'to equal', {
+                foo: 'æøå'
+            });
+        });
+
         it('should reserialize the body as utf-8', function () {
             var message = new Message(new Buffer('Content-Type: application/json\n\n{"foo":"æøå"}', 'utf-8'));
             message.body = { foo: '☺' };
@@ -544,6 +550,14 @@ describe('Message', function () {
     });
 
     describe('#body', function () {
+        it('should decode the body as text when the Content-Type contains +xml', function () {
+            expect(new Message(
+                'Content-Type: foobar+xml\r\n' +
+                '\r\n' +
+                '<?xml version="1.0" encoding="utf-8"?><foo></foo>\r\n'
+            ).body, 'to equal', '<?xml version="1.0" encoding="utf-8"?><foo></foo>\r\n');
+        });
+
         it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a string', function () {
             expect(new Message(
                 'Content-Type: text/plain; charset=UTF-8\r\n' +
