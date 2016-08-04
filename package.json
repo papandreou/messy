@@ -32,7 +32,7 @@
     "unexpected": "8.0.1"
   },
   "dependencies": {
-    "iconv-lite": "0.4.6",
+    "iconv-lite": "^0.4.13",
     "quoted-printable": "1.0.0",
     "rfc2047": "2.0.0",
     "rfc2231": "1.2.0",
