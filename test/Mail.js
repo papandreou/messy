@@ -43,8 +43,7 @@ describe('Mail', function () {
                     'to equal',
                     // TODO: Would be better to emit 'Content-Type: image/png; name="=?iso-8859-1?Q?=E6=F8=E5.png?="\r\n' +
                     'Content-Type: image/png; =?utf-8?Q?name=3D=C3=A6=C3=B8=C3=A5?=.png\r\n' +
-                    'Content-Disposition: attachment;\r\n' +
-                    " filename*=iso-8859-1''%E6%F8%E5%2E%70%6E%67\r\n"
+                    "Content-Disposition: attachment; filename*=iso-8859-1''%E6%F8%E5.png\r\n"
                 );
             });
         });

@@ -810,8 +810,7 @@ describe('Message', function () {
                     message.toString(),
                     'to equal',
                     'Content-Type: image/png\r\n' +
-                    'Content-Disposition: attachment;\r\n' +
-                    " filename*=iso-8859-1''%E6%F8%E5%2E%70%6E%67\r\n"
+                    "Content-Disposition: attachment; filename*=iso-8859-1''%E6%F8%E5.png\r\n"
                 );
             });
         });
