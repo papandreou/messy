@@ -23,7 +23,8 @@ describe('Message', function () {
 
     it('should parse the headers from the input', function () {
         var message = new Message('From: thisguy@example.com\r\nTo: thisotherguy@example.com');
-        expect(message.headers.getNames(), 'to equal', ['from', 'to']);
+        expect(message.headers.getNames(), 'to equal', ['From', 'To']);
+        expect(message.headers.getNamesLowerCase(), 'to equal', ['from', 'to']);
     });
 
     it('should support reading a Buffer instance with iso-8859-1 chars', function () {
@@ -121,7 +122,8 @@ describe('Message', function () {
             "..."
         ].join('\r\n'), 'utf-8'));
 
-        expect(message.headers.getNames(), 'to equal', ['content-type', 'content-transfer-encoding', 'subject', 'from', 'message-id', 'date', 'to', 'mime-version']);
+        expect(message.headers.getNames(), 'to equal', ['Content-Type', 'Content-Transfer-Encoding', 'Subject', 'From', 'Message-Id', 'Date', 'To', 'Mime-Version']);
+        expect(message.headers.getNamesLowerCase(), 'to equal', ['content-type', 'content-transfer-encoding', 'subject', 'from', 'message-id', 'date', 'to', 'mime-version']);
         expect(message.headers.get('Content-Type'), 'to equal', 'multipart/mixed;\tboundary=Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD');
         expect(message.headers.get('content-transfer-encoding'), 'to equal', '7bit');
         expect(message.headers.get('Subject'), 'to equal', 'Foobar 123');

@@ -51,6 +51,14 @@ describe('Headers', function () {
         expect(headers.toString(), 'to equal', 'Cookie: foo=bar\r\nCookie: quux=baz\r\n');
     });
 
+    it('should return the header names in their original case', function () {
+        expect(new Headers({'X-in-ORIGNAL-Case': 'baz'}).getNames(), 'to equal', ['X-in-ORIGNAL-Case']);
+    });
+
+    it('should return lower case header names when requested', function () {
+        expect(new Headers({'X-in-ORIGNAL-Case': 'baz'}).getNamesLowerCase(), 'to equal', ['x-in-orignal-case']);
+    });
+
     describe('#remove', function () {
         it('should remove all header values for the given header when only passed one argument', function () {
             var headers = new Headers({foo: ['bla', 'bar'], quux: 'baz'});
