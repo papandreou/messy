@@ -681,6 +681,16 @@ describe('Message', function () {
             ])).body, 'to equal', 'foobar');
         });
 
+        it.skipIf(!require('zlib').gunzipSync, 'should decode Content-Encoding:gzip when the message has been instantiated from an object', function () {
+            expect(new Message({
+                headers: {
+                    'Content-Type': 'text/plain',
+                    'Content-Encoding': 'gzip'
+                },
+                unchunkedBody: require('zlib').gzipSync('foobarquux')
+            }).body, 'to equal', 'foobarquux');
+        });
+
         it('should decode application/x-www-form-urlencoded as text', function () {
             var src = new Buffer('Content-Type: application/x-www-form-urlencoded\n\nfoo=bar&data=%5B%22foo.txt%22%5D', 'ascii');
             expect(new Message(src).body, 'to equal', 'foo=bar&data=%5B%22foo.txt%22%5D');
