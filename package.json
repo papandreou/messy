@@ -1,6 +1,6 @@
 {
   "name": "messy",
-  "version": "6.14.0",
+  "version": "6.15.0",
   "description": "Object model for HTTP and RFC822 messages",
   "main": "lib/index.js",
   "directories": {
