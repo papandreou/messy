@@ -239,10 +239,11 @@ describe('Message', function () {
 
         describe('when the body is specified as a string', function () {
             it('should interpret the string as already encoded JSON', function () {
-                expect(new Message({
+                var msg = new Message({
                     headers: { 'Content-Type': 'application/json' },
                     body: '{"foo":     123}'
-                }).unchunkedBody.toString(), 'to equal', '{"foo":     123}');
+                });
+                expect(msg.unchunkedBody.toString(), 'to equal', '{"foo":     123}');
             });
         });
     });
@@ -553,6 +554,135 @@ describe('Message', function () {
                         'Content-Type: text/plain; charset=UTF-8\r\n' +
                         'Transfer-Encoding: chunked\r\n',
                     unchunkedBody: 'foobar'
+                });
+                expect(message.rawBody, 'to equal', new Buffer('6\r\nfoobar\r\n0\r\n\r\n', 'utf-8'));
+                expect(message.body, 'to equal', 'foobar');
+            });
+        });
+    });
+
+    describe('#decodedBody', function () {
+        it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Transfer-Encoding: chunked\r\n' +
+                '\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '5\r\n' +
+                'pedia\r\n' +
+                'e\r\n' +
+                ' in\r\n\r\nchunks.\r\n' +
+                '0\r\n' +
+                '\r\n'
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
+
+        it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
+            expect(new Message(
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.\r\n' +
+                    '0\r\n' +
+                    '\r\n',
+                    'utf-8'
+                )
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
+
+        it('should decode Transfer-Encoding:chunked when a partial body is provided as a string', function () {
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Transfer-Encoding: chunked\r\n' +
+                '\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '5\r\n' +
+                'pedia\r\n' +
+                'e\r\n' +
+                ' in\r\n\r\nchunks.'
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+
+            expect(new Message(
+                'Content-Type: text/plain; charset=UTF-8\r\n' +
+                'Transfer-Encoding: chunked\r\n' +
+                '\r\n' +
+                '4\r\n' +
+                'Wiki\r\n' +
+                '5\r\n' +
+                'pedia\r\n' +
+                'e\r\n' +
+                ' in\r\n\r\nchunks.\r\n'
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
+
+        it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function () {
+            expect(new Message(
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.',
+                    'utf-8'
+                )
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+
+            expect(new Message(
+                new Buffer(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.\r\n',
+                    'utf-8'
+                )
+            ).decodedBody, 'to equal', 'Wikipedia in\r\n\r\nchunks.');
+        });
+
+        describe('when accessed as a setter', function () {
+            it('should update rawBody and body', function () {
+                var message = new Message(
+                    'Content-Type: text/plain; charset=UTF-8\r\n' +
+                    'Transfer-Encoding: chunked\r\n' +
+                    '\r\n' +
+                    '4\r\n' +
+                    'Wiki\r\n' +
+                    '5\r\n' +
+                    'pedia\r\n' +
+                    'e\r\n' +
+                    ' in\r\n\r\nchunks.\r\n' +
+                    '0\r\n' +
+                    '\r\n'
+                );
+                message.decodedBody = 'foobar';
+                expect(message.rawBody, 'to equal', new Buffer('6\r\nfoobar\r\n0\r\n\r\n'));
+                expect(message.body, 'to equal', 'foobar');
+            });
+        });
+
+        describe('when passed to the constructor', function () {
+            it('should populate rawBody and body', function () {
+                var message = new Message({
+                    headers:
+                        'Content-Type: text/plain; charset=UTF-8\r\n' +
+                        'Transfer-Encoding: chunked\r\n',
+                    decodedBody: 'foobar'
                 });
                 expect(message.rawBody, 'to equal', new Buffer('6\r\nfoobar\r\n0\r\n\r\n', 'utf-8'));
                 expect(message.body, 'to equal', 'foobar');
