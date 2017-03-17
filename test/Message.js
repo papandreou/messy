@@ -236,6 +236,15 @@ describe('Message', function () {
                 expect(message.body, 'to equal', '!!=!=');
             });
         });
+
+        describe('when the body is specified as a string', function () {
+            it('should interpret the string as already encoded JSON', function () {
+                expect(new Message({
+                    headers: { 'Content-Type': 'application/json' },
+                    body: '{"foo":     123}'
+                }).unchunkedBody.toString(), 'to equal', '{"foo":     123}');
+            });
+        });
     });
 
     describe('with parts passed to the constructor', function () {
