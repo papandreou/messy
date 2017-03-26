@@ -3,6 +3,12 @@ var expect = require('unexpected'),
     HttpResponse = require('../lib/HttpResponse');
 
 describe('HttpResponse', function () {
+    it('should complain when receiving an unsupported property', function () {
+        expect(function () {
+            new HttpResponse({ contentType: 'text/css' });
+        }, 'to throw', 'messy.Message: Unsupported property name: contentType');
+    });
+
     it('should parse a standalone status line', function () {
         var httpResponse = new HttpResponse('HTTP/1.1 200 OK');
         expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');

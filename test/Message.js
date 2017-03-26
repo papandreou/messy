@@ -21,6 +21,12 @@ describe('Message', function () {
         expect(message.toString(), 'to equal', 'Received: foo\r\nReceived: bar\r\nSubject: hey\r\n\r\nabc');
     });
 
+    it('should complain when receiving an unsupported property', function () {
+        expect(function () {
+            new Message({ contentType: 'text/css' });
+        }, 'to throw', 'messy.Message: Unsupported property name: contentType');
+    });
+
     it('should parse the headers from the input', function () {
         var message = new Message('From: thisguy@example.com\r\nTo: thisotherguy@example.com');
         expect(message.headers.getNames(), 'to equal', ['From', 'To']);
