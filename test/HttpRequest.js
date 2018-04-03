@@ -9,6 +9,10 @@ describe('HttpRequest', function () {
         }, 'to throw', 'messy.Message: Unsupported property name: contentType');
     });
 
+    it('should allow the credentials property to be passed (for fetch)', function () {
+        new HttpRequest({ credentials: 'same-origin' });
+    });
+
     it('should parse a standalone request line', function () {
         var httpRequest = new HttpRequest('GET /foo HTTP/1.1');
         expect(httpRequest.method, 'to equal', 'GET');
