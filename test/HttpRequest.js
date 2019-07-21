@@ -240,7 +240,7 @@ describe("HttpRequest", function() {
       "\r\n" +
       "blah";
 
-    const httpRequest = new HttpRequest(new Buffer(rawSrc, "ascii"));
+    const httpRequest = new HttpRequest(Buffer.from(rawSrc, "ascii"));
 
     expect(httpRequest.toString(), "to equal", rawSrc);
   });

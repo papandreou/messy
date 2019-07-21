@@ -224,7 +224,7 @@ describe("HttpResponse", function() {
       "\r\n" +
       "blah";
 
-    const httpResponse = new HttpResponse(new Buffer(rawSrc, "ascii"));
+    const httpResponse = new HttpResponse(Buffer.from(rawSrc, "ascii"));
 
     expect(httpResponse.toString(), "to equal", rawSrc);
   });
