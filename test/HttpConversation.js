@@ -1,68 +1,68 @@
 /* global describe, it */
-const expect = require("unexpected");
-const HttpConversation = require("../lib/HttpConversation");
-const HttpExchange = require("../lib/HttpExchange");
-const HttpRequest = require("../lib/HttpRequest");
-const HttpResponse = require("../lib/HttpResponse");
+const expect = require('unexpected');
+const HttpConversation = require('../lib/HttpConversation');
+const HttpExchange = require('../lib/HttpExchange');
+const HttpRequest = require('../lib/HttpRequest');
+const HttpResponse = require('../lib/HttpResponse');
 
-describe("HttpConversation", function() {
-  it("should accept an object with an exchanges property containing an array of objects containing an HttpRequest and HttpResponse instances", function() {
+describe('HttpConversation', function() {
+  it('should accept an object with an exchanges property containing an array of objects containing an HttpRequest and HttpResponse instances', function() {
     const httpConversation = new HttpConversation({
       exchanges: [
         {
-          request: new HttpRequest("GET / HTTP/1.1\nFoo: Bar\n\nblah"),
-          response: new HttpResponse("HTTP/1.1 200 OK\nQuux: Baz\n\nblaf")
+          request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
+          response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
         }
       ]
     });
 
     expect(
       httpConversation.exchanges,
-      "to have items satisfying",
-      "to be an",
+      'to have items satisfying',
+      'to be an',
       HttpExchange
     );
     expect(
       httpConversation.toString(),
-      "to equal",
-      "GET / HTTP/1.1\r\nFoo: Bar\r\n\r\nblah\r\n\r\nHTTP/1.1 200 OK\r\nQuux: Baz\r\n\r\nblaf"
+      'to equal',
+      'GET / HTTP/1.1\r\nFoo: Bar\r\n\r\nblah\r\n\r\nHTTP/1.1 200 OK\r\nQuux: Baz\r\n\r\nblaf'
     );
   });
 
-  it("should accept an object with an exchanges property containing array of objects containing request and response as strings", function() {
+  it('should accept an object with an exchanges property containing array of objects containing request and response as strings', function() {
     const httpConversation = new HttpConversation({
       exchanges: [
         new HttpExchange({
-          request: "GET / HTTP/1.1\nFoo: Bar\n\nblah",
-          response: "HTTP/1.1 200 OK\nQuux: Baz\n\nblaf"
+          request: 'GET / HTTP/1.1\nFoo: Bar\n\nblah',
+          response: 'HTTP/1.1 200 OK\nQuux: Baz\n\nblaf'
         })
       ]
     });
     expect(
       httpConversation.toString(),
-      "to equal",
-      "GET / HTTP/1.1\r\nFoo: Bar\r\n\r\nblah\r\n\r\nHTTP/1.1 200 OK\r\nQuux: Baz\r\n\r\nblaf"
+      'to equal',
+      'GET / HTTP/1.1\r\nFoo: Bar\r\n\r\nblah\r\n\r\nHTTP/1.1 200 OK\r\nQuux: Baz\r\n\r\nblaf'
     );
   });
 
-  it("should accept an object with an exchanges property containing HttpRequest and HttpResponse options objects", function() {
+  it('should accept an object with an exchanges property containing HttpRequest and HttpResponse options objects', function() {
     const httpConversation = new HttpConversation({
       exchanges: [
         {
           request: {
             requestLine: {
-              method: "GET",
-              protocol: "HTTP/1.1",
-              path: "/"
+              method: 'GET',
+              protocol: 'HTTP/1.1',
+              path: '/'
             },
             headers: {
-              "Content-Type": "text/html"
+              'Content-Type': 'text/html'
             },
-            body: "The Body"
+            body: 'The Body'
           },
           response: {
-            statusLine: "HTTP/1.1 404 Not Found",
-            headers: "Content-Type: application/json",
+            statusLine: 'HTTP/1.1 404 Not Found',
+            headers: 'Content-Type: application/json',
             body: { foo: 123 }
           }
         }
@@ -70,23 +70,23 @@ describe("HttpConversation", function() {
     });
     expect(
       httpConversation.toString(),
-      "to equal",
+      'to equal',
       'GET / HTTP/1.1\r\nContent-Type: text/html\r\n\r\nThe Body\r\n\r\nHTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\n\r\n{"foo":123}'
     );
   });
 
-  it("should consider identical instances equal", function() {
+  it('should consider identical instances equal', function() {
     const httpConversation1 = new HttpConversation({
       exchanges: [
         {
-          request: "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah",
+          request: 'GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah',
           response: {
             statusLine: {
               statusCode: 200,
-              protocol: "HTTP/1.1",
-              statusMessage: "OK"
+              protocol: 'HTTP/1.1',
+              statusMessage: 'OK'
             },
-            body: "blaf"
+            body: 'blaf'
           }
         }
       ]
@@ -95,38 +95,38 @@ describe("HttpConversation", function() {
       exchanges: [
         {
           request: {
-            method: "GET",
-            url: "/foo",
-            protocol: "HTTP/1.1",
+            method: 'GET',
+            url: '/foo',
+            protocol: 'HTTP/1.1',
             headers: {
-              host: "foo.com"
+              host: 'foo.com'
             },
-            body: "blah"
+            body: 'blah'
           },
-          response: "HTTP/1.1 200 OK\r\n\r\nblaf"
+          response: 'HTTP/1.1 200 OK\r\n\r\nblaf'
         }
       ]
     });
-    expect(httpConversation1.equals(httpConversation2), "to be true");
+    expect(httpConversation1.equals(httpConversation2), 'to be true');
     expect(
       httpConversation1.toString(),
-      "to equal",
+      'to equal',
       httpConversation2.toString()
     );
   });
 
-  it("should consider different instances unequal", function() {
+  it('should consider different instances unequal', function() {
     const httpConversation1 = new HttpConversation({
       exchanges: [
         {
-          request: "GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah",
+          request: 'GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah',
           response: {
             statusLine: {
               statusCode: 200,
-              protocol: "HTTP/1.1",
-              statusMessage: "OK"
+              protocol: 'HTTP/1.1',
+              statusMessage: 'OK'
             },
-            body: "blaf"
+            body: 'blaf'
           }
         }
       ]
@@ -135,86 +135,86 @@ describe("HttpConversation", function() {
       exchanges: [
         {
           request: {
-            method: "GET",
-            url: "/foo",
-            protocol: "HTTP/1.1"
+            method: 'GET',
+            url: '/foo',
+            protocol: 'HTTP/1.1'
           },
-          response: "HTTP/1.1 200 OK\r\n\r\nblaf"
+          response: 'HTTP/1.1 200 OK\r\n\r\nblaf'
         }
       ]
     });
-    expect(httpConversation1.equals(httpConversation2), "to be false");
+    expect(httpConversation1.equals(httpConversation2), 'to be false');
     expect(
       httpConversation1.toString(),
-      "not to equal",
+      'not to equal',
       httpConversation2.toString()
     );
   });
 
-  describe("#toJSON", function() {
-    it("should return an object with the exchanges JSONified", function() {
+  describe('#toJSON', function() {
+    it('should return an object with the exchanges JSONified', function() {
       expect(
         new HttpConversation({
           exchanges: [
             {
-              request: new HttpRequest("GET / HTTP/1.1\nFoo: Bar\n\nblah"),
-              response: new HttpResponse("HTTP/1.1 200 OK\nQuux: Baz\n\nblaf")
+              request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
+              response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
             },
             {
               request: new HttpRequest(
-                "GET /foo HTTP/1.1\nFoo: Barrr\n\nblahhh"
+                'GET /foo HTTP/1.1\nFoo: Barrr\n\nblahhh'
               ),
               response: new HttpResponse(
-                "HTTP/1.1 412 Precondition Failed\nQuux: Bazzz\n\nblafff"
+                'HTTP/1.1 412 Precondition Failed\nQuux: Bazzz\n\nblafff'
               )
             }
           ]
         }).toJSON(),
-        "to equal",
+        'to equal',
         {
           exchanges: [
             {
               request: {
-                method: "GET",
-                url: "/",
-                protocolName: "HTTP",
-                protocolVersion: "1.1",
+                method: 'GET',
+                url: '/',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
                 headers: {
-                  Foo: "Bar"
+                  Foo: 'Bar'
                 },
-                rawBody: "blah"
+                rawBody: 'blah'
               },
               response: {
                 statusCode: 200,
-                statusMessage: "OK",
-                protocolName: "HTTP",
-                protocolVersion: "1.1",
+                statusMessage: 'OK',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
                 headers: {
-                  Quux: "Baz"
+                  Quux: 'Baz'
                 },
-                rawBody: "blaf"
+                rawBody: 'blaf'
               }
             },
             {
               request: {
-                method: "GET",
-                url: "/foo",
-                protocolName: "HTTP",
-                protocolVersion: "1.1",
+                method: 'GET',
+                url: '/foo',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
                 headers: {
-                  Foo: "Barrr"
+                  Foo: 'Barrr'
                 },
-                rawBody: "blahhh"
+                rawBody: 'blahhh'
               },
               response: {
                 statusCode: 412,
-                statusMessage: "Precondition Failed",
-                protocolName: "HTTP",
-                protocolVersion: "1.1",
+                statusMessage: 'Precondition Failed',
+                protocolName: 'HTTP',
+                protocolVersion: '1.1',
                 headers: {
-                  Quux: "Bazzz"
+                  Quux: 'Bazzz'
                 },
-                rawBody: "blafff"
+                rawBody: 'blafff'
               }
             }
           ]
