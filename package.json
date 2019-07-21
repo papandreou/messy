@@ -29,7 +29,7 @@
     "istanbul": "^0.4.5",
     "jshint": "^2.9.4",
     "mocha": "^3.2.0",
-    "unexpected": "^10.26.3"
+    "unexpected": "^11.7.0"
   },
   "dependencies": {
     "iconv-lite": "^0.4.13",
