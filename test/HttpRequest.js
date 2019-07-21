@@ -1,6 +1,6 @@
 /* global describe, it */
-var expect = require("unexpected");
-var HttpRequest = require("../lib/HttpRequest");
+const expect = require("unexpected");
+const HttpRequest = require("../lib/HttpRequest");
 
 describe("HttpRequest", function() {
   it("should complain when receiving an unsupported property", function() {
@@ -18,7 +18,7 @@ describe("HttpRequest", function() {
   });
 
   it("should parse a standalone request line", function() {
-    var httpRequest = new HttpRequest("GET /foo HTTP/1.1");
+    const httpRequest = new HttpRequest("GET /foo HTTP/1.1");
     expect(httpRequest.method, "to equal", "GET");
     expect(httpRequest.url, "to equal", "/foo");
     expect(httpRequest.protocol, "to equal", "HTTP/1.1");
@@ -26,18 +26,18 @@ describe("HttpRequest", function() {
   });
 
   it("should add a leading slash to the request url if not specified", function() {
-    var httpRequest = new HttpRequest("GET foo");
+    const httpRequest = new HttpRequest("GET foo");
     expect(httpRequest.method, "to equal", "GET");
     expect(httpRequest.url, "to equal", "/foo");
   });
 
   it("should parse a request url with a query string", function() {
-    var httpRequest = new HttpRequest({ url: "GET /foo?quux=baz" });
+    const httpRequest = new HttpRequest({ url: "GET /foo?quux=baz" });
     expect(httpRequest.requestLine.url, "to equal", "/foo?quux=baz");
   });
 
   it("should parse a request line followed by headers", function() {
-    var httpRequest = new HttpRequest("GET /foo HTTP/1.1\r\nHost: foo.com\r\n");
+    const httpRequest = new HttpRequest("GET /foo HTTP/1.1\r\nHost: foo.com\r\n");
     expect(httpRequest.url, "to equal", "/foo");
     expect(
       httpRequest.toString(),
@@ -47,7 +47,7 @@ describe("HttpRequest", function() {
   });
 
   it("should parse a request line followed by headers and a body", function() {
-    var httpRequest = new HttpRequest(
+    const httpRequest = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
     expect(httpRequest.url, "to equal", "/foo");
@@ -108,7 +108,7 @@ describe("HttpRequest", function() {
   });
 
   it("should allow updating the request line via a setter", function() {
-    var httpRequest = new HttpRequest({
+    const httpRequest = new HttpRequest({
       method: "GET",
       url: "/foo",
       protocol: "HTTP/1.1"
@@ -146,7 +146,7 @@ describe("HttpRequest", function() {
   });
 
   it("should make path, query, and search available as individual setters", function() {
-    var httpRequest = new HttpRequest("GET /foo?foo=bar HTTP/1.1");
+    const httpRequest = new HttpRequest("GET /foo?foo=bar HTTP/1.1");
     httpRequest.search = "?blabla";
     httpRequest.path = "/bla";
     expect(httpRequest.url, "to equal", "/bla?blabla");
@@ -167,80 +167,80 @@ describe("HttpRequest", function() {
   });
 
   it("should consider an identical instance equal", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
     expect(httpRequest1.equals(httpRequest2), "to be true");
   });
 
   it("should consider two instances unequal if they differ by method", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "POST /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by url", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "GET /bar HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by protocol", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah"
     );
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should consider two instances unequal if their headers differ", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nblah"
     );
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should consider two instances unequal if their bodies differ", function() {
-    var httpRequest1 = new HttpRequest(
+    const httpRequest1 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah"
     );
-    var httpRequest2 = new HttpRequest(
+    const httpRequest2 = new HttpRequest(
       "GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nquux"
     );
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should consider instances with different encrypted flags different", function() {
-    var httpRequest1 = new HttpRequest({ encrypted: true });
-    var httpRequest2 = new HttpRequest({ encrypted: false });
+    const httpRequest1 = new HttpRequest({ encrypted: true });
+    const httpRequest2 = new HttpRequest({ encrypted: false });
     expect(httpRequest1.equals(httpRequest2), "to be false");
   });
 
   it("should parse a buffer", function() {
-    var rawSrc =
+    const rawSrc =
       "POST / HTTP/1.1\r\n" +
       "Date: Sat, 21 Mar 2015 00:25:45 GMT\r\n" +
       "Connection: keep-alive\r\n" +
       "\r\n" +
       "blah";
 
-    var httpRequest = new HttpRequest(new Buffer(rawSrc, "ascii"));
+    const httpRequest = new HttpRequest(new Buffer(rawSrc, "ascii"));
 
     expect(httpRequest.toString(), "to equal", rawSrc);
   });
@@ -304,7 +304,7 @@ describe("HttpRequest", function() {
 
     describe("invoked as a setter", function() {
       it("should update the encrypted, host, port, path, and search properties", function() {
-        var httpRequest = new HttpRequest(
+        const httpRequest = new HttpRequest(
           "GET http://foo:bar@localhost:3000/yes/?i=am"
         );
         expect(httpRequest.headers.getAll("Authorization"), "to equal", [
@@ -324,7 +324,7 @@ describe("HttpRequest", function() {
       });
 
       it("should remove an existing Authorization header if the new url does not have credentials", function() {
-        var httpRequest = new HttpRequest(
+        const httpRequest = new HttpRequest(
           "GET http://foo:bar@localhost:3000/yes/?i=am"
         );
         httpRequest.url = "http://localhost:9876/no/not/?so=much";
@@ -339,14 +339,14 @@ describe("HttpRequest", function() {
 
   describe("with a url passed in the request line", function() {
     it("should support a localhost url", function() {
-      var httpRequest = new HttpRequest("GET http://localhost:3000/");
+      const httpRequest = new HttpRequest("GET http://localhost:3000/");
       expect(httpRequest.headers.get("Host"), "to equal", "localhost:3000");
       expect(httpRequest.host, "to equal", "localhost");
       expect(httpRequest.port, "to equal", 3000);
     });
 
     it("should allow passing the same host in the host property and in the url", function() {
-      var httpRequest = new HttpRequest({
+      const httpRequest = new HttpRequest({
         url: "GET http://localhost:3000/",
         host: "localhost"
       });
@@ -367,7 +367,7 @@ describe("HttpRequest", function() {
     });
 
     it("should allow passing the same port in the port property and in the url", function() {
-      var httpRequest = new HttpRequest({
+      const httpRequest = new HttpRequest({
         url: "GET http://localhost:3000/",
         port: 3000
       });
@@ -385,13 +385,13 @@ describe("HttpRequest", function() {
     });
 
     it("should support a url with an IP address", function() {
-      var httpRequest = new HttpRequest("GET http://99.88.77.66/");
+      const httpRequest = new HttpRequest("GET http://99.88.77.66/");
       expect(httpRequest.headers.get("Host"), "to equal", "99.88.77.66");
       expect(httpRequest.host, "to equal", "99.88.77.66");
     });
 
     it("should set the Host header", function() {
-      var httpRequest = new HttpRequest("GET http://foo.com/");
+      const httpRequest = new HttpRequest("GET http://foo.com/");
       expect(httpRequest.headers.get("Host"), "to equal", "foo.com");
     });
 
@@ -510,7 +510,7 @@ describe("HttpRequest", function() {
 
   describe("with a url passed in an options object", function() {
     it("should set the Host header", function() {
-      var httpRequest = new HttpRequest({ url: "GET http://foo.com/" });
+      const httpRequest = new HttpRequest({ url: "GET http://foo.com/" });
       expect(httpRequest.headers.get("Host"), "to equal", "foo.com");
     });
 
@@ -555,12 +555,12 @@ describe("HttpRequest", function() {
     });
 
     it("should set the Host header and include the port if given", function() {
-      var httpRequest = new HttpRequest({ url: "GET http://foo.com:987/" });
+      const httpRequest = new HttpRequest({ url: "GET http://foo.com:987/" });
       expect(httpRequest.headers.get("Host"), "to equal", "foo.com:987");
     });
 
     it("should not overwrite an explicit Host header", function() {
-      var httpRequest = new HttpRequest({
+      const httpRequest = new HttpRequest({
         url: "GET http://foo.com/",
         headers: { Host: "bar.com" }
       });
@@ -580,7 +580,7 @@ describe("HttpRequest", function() {
     });
 
     it("should set the Authorization header if credentials are passed in the url", function() {
-      var httpRequest = new HttpRequest({
+      const httpRequest = new HttpRequest({
         url: "GET https://foo:bar@foo.com/"
       });
       expect(
@@ -591,7 +591,7 @@ describe("HttpRequest", function() {
     });
 
     it("should keep the Authorization header when no credentials are passed in the url", function() {
-      var httpRequest = new HttpRequest({
+      const httpRequest = new HttpRequest({
         url: "GET http://localhost:36033/",
         headers: { Authorization: "foobar" }
       });

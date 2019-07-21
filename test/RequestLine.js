@@ -1,6 +1,6 @@
 /* global describe, it */
-var expect = require("unexpected");
-var RequestLine = require("../lib/RequestLine");
+const expect = require("unexpected");
+const RequestLine = require("../lib/RequestLine");
 
 describe("RequestLine", function() {
   it("should add a leading slash to the url if not specified", function() {

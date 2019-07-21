@@ -1,12 +1,12 @@
 /* global describe, it */
-var expect = require("unexpected");
-var HttpExchange = require("../lib/HttpExchange");
-var HttpRequest = require("../lib/HttpRequest");
-var HttpResponse = require("../lib/HttpResponse");
+const expect = require("unexpected");
+const HttpExchange = require("../lib/HttpExchange");
+const HttpRequest = require("../lib/HttpRequest");
+const HttpResponse = require("../lib/HttpResponse");
 
 describe("HttpExchange", function() {
   it("should accept an object containing an HttpRequest and an HttpResponse instance", function() {
-    var httpExchange = new HttpExchange({
+    const httpExchange = new HttpExchange({
       request: new HttpRequest("GET / HTTP/1.1\nFoo: Bar\n\nblah"),
       response: new HttpResponse("HTTP/1.1 200 OK\nQuux: Baz\n\nblaf")
     });
@@ -22,7 +22,7 @@ describe("HttpExchange", function() {
   });
 
   it("should accept an object containing request and response as strings", function() {
-    var httpExchange = new HttpExchange({
+    const httpExchange = new HttpExchange({
       request: "GET / HTTP/1.1\nFoo: Bar\n\nblah",
       response: "HTTP/1.1 200 OK\nQuux: Baz\n\nblaf"
     });
@@ -37,7 +37,7 @@ describe("HttpExchange", function() {
   });
 
   it("should accept an object containing HttpRequest and HttpResponse options objects", function() {
-    var httpExchange = new HttpExchange({
+    const httpExchange = new HttpExchange({
       request: {
         requestLine: {
           method: "GET",
@@ -66,7 +66,7 @@ describe("HttpExchange", function() {
   });
 
   it("should consider identical instances equal", function() {
-    var httpExchange1 = new HttpExchange({
+    const httpExchange1 = new HttpExchange({
       request: "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah",
       response: {
         statusLine: {
@@ -77,7 +77,7 @@ describe("HttpExchange", function() {
         body: "blaf"
       }
     });
-    var httpExchange2 = new HttpExchange({
+    const httpExchange2 = new HttpExchange({
       request: {
         method: "GET",
         url: "/foo",
@@ -94,7 +94,7 @@ describe("HttpExchange", function() {
   });
 
   it("should consider different instances unequal", function() {
-    var httpExchange1 = new HttpExchange({
+    const httpExchange1 = new HttpExchange({
       request: "GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah",
       response: {
         statusLine: {
@@ -105,7 +105,7 @@ describe("HttpExchange", function() {
         body: "blaf"
       }
     });
-    var httpExchange2 = new HttpExchange({
+    const httpExchange2 = new HttpExchange({
       request: {
         method: "GET",
         url: "/foo",
@@ -153,7 +153,7 @@ describe("HttpExchange", function() {
     // Makes it possible to use statusLine.toJSON() as the RHS of a 'to satisfy' assertion in Unexpected
     // where undefined means that the property must not be present:
     it("should not include the keys that have undefined values", function() {
-      var httpExchange = new HttpExchange({
+      const httpExchange = new HttpExchange({
         request: new HttpRequest("GET / HTTP/1.1\nFoo: Bar\n\nblah"),
         response: undefined
       });

@@ -1,13 +1,13 @@
 /* global describe, it */
-var expect = require("unexpected");
-var HttpConversation = require("../lib/HttpConversation");
-var HttpExchange = require("../lib/HttpExchange");
-var HttpRequest = require("../lib/HttpRequest");
-var HttpResponse = require("../lib/HttpResponse");
+const expect = require("unexpected");
+const HttpConversation = require("../lib/HttpConversation");
+const HttpExchange = require("../lib/HttpExchange");
+const HttpRequest = require("../lib/HttpRequest");
+const HttpResponse = require("../lib/HttpResponse");
 
 describe("HttpConversation", function() {
   it("should accept an object with an exchanges property containing an array of objects containing an HttpRequest and HttpResponse instances", function() {
-    var httpConversation = new HttpConversation({
+    const httpConversation = new HttpConversation({
       exchanges: [
         {
           request: new HttpRequest("GET / HTTP/1.1\nFoo: Bar\n\nblah"),
@@ -30,7 +30,7 @@ describe("HttpConversation", function() {
   });
 
   it("should accept an object with an exchanges property containing array of objects containing request and response as strings", function() {
-    var httpConversation = new HttpConversation({
+    const httpConversation = new HttpConversation({
       exchanges: [
         new HttpExchange({
           request: "GET / HTTP/1.1\nFoo: Bar\n\nblah",
@@ -46,7 +46,7 @@ describe("HttpConversation", function() {
   });
 
   it("should accept an object with an exchanges property containing HttpRequest and HttpResponse options objects", function() {
-    var httpConversation = new HttpConversation({
+    const httpConversation = new HttpConversation({
       exchanges: [
         {
           request: {
@@ -76,7 +76,7 @@ describe("HttpConversation", function() {
   });
 
   it("should consider identical instances equal", function() {
-    var httpConversation1 = new HttpConversation({
+    const httpConversation1 = new HttpConversation({
       exchanges: [
         {
           request: "GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah",
@@ -91,7 +91,7 @@ describe("HttpConversation", function() {
         }
       ]
     });
-    var httpConversation2 = new HttpConversation({
+    const httpConversation2 = new HttpConversation({
       exchanges: [
         {
           request: {
@@ -116,7 +116,7 @@ describe("HttpConversation", function() {
   });
 
   it("should consider different instances unequal", function() {
-    var httpConversation1 = new HttpConversation({
+    const httpConversation1 = new HttpConversation({
       exchanges: [
         {
           request: "GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah",
@@ -131,7 +131,7 @@ describe("HttpConversation", function() {
         }
       ]
     });
-    var httpConversation2 = new HttpConversation({
+    const httpConversation2 = new HttpConversation({
       exchanges: [
         {
           request: {

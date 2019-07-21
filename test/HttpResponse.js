@@ -1,6 +1,6 @@
 /* global describe, it */
-var expect = require("unexpected");
-var HttpResponse = require("../lib/HttpResponse");
+const expect = require("unexpected");
+const HttpResponse = require("../lib/HttpResponse");
 
 describe("HttpResponse", function() {
   it("should complain when receiving an unsupported property", function() {
@@ -14,7 +14,7 @@ describe("HttpResponse", function() {
   });
 
   it("should parse a standalone status line", function() {
-    var httpResponse = new HttpResponse("HTTP/1.1 200 OK");
+    const httpResponse = new HttpResponse("HTTP/1.1 200 OK");
     expect(httpResponse.protocol, "to equal", "HTTP/1.1");
     expect(httpResponse.statusCode, "to equal", 200);
     expect(httpResponse.statusMessage, "to equal", "OK");
@@ -22,7 +22,7 @@ describe("HttpResponse", function() {
   });
 
   it("should parse a status line with more than one word in the status message", function() {
-    var httpResponse = new HttpResponse("HTTP/1.1 412 Precondition Failed");
+    const httpResponse = new HttpResponse("HTTP/1.1 412 Precondition Failed");
     expect(httpResponse.protocol, "to equal", "HTTP/1.1");
     expect(httpResponse.statusCode, "to equal", 412);
     expect(httpResponse.statusMessage, "to equal", "Precondition Failed");
@@ -34,7 +34,7 @@ describe("HttpResponse", function() {
   });
 
   it("should parse a status line followed by headers", function() {
-    var httpResponse = new HttpResponse(
+    const httpResponse = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n"
     );
     expect(httpResponse.statusCode, "to equal", 200);
@@ -46,7 +46,7 @@ describe("HttpResponse", function() {
   });
 
   it("should parse a status line followed by headers and a body", function() {
-    var httpResponse = new HttpResponse(
+    const httpResponse = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
     expect(httpResponse.statusCode, "to equal", 200);
@@ -107,7 +107,7 @@ describe("HttpResponse", function() {
   });
 
   it("should allow updating the status line", function() {
-    var httpResponse = new HttpResponse({
+    const httpResponse = new HttpResponse({
       protocol: "HTTP/1.1",
       statusCode: 200,
       statusMessage: "OK"
@@ -153,67 +153,67 @@ describe("HttpResponse", function() {
   });
 
   it("should consider an identical instance equal", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
     expect(httpResponse1.equals(httpResponse2), "to be true");
   });
 
   it("should consider two instances unequal if they differ by protocol", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
     expect(httpResponse1.equals(httpResponse2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by status code", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.1 400 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
     expect(httpResponse1.equals(httpResponse2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by status message", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.1 200 KO\r\nContent-Type: text/html\r\n\r\nblah"
     );
     expect(httpResponse1.equals(httpResponse2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by status message", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nblah"
     );
     expect(httpResponse1.equals(httpResponse2), "to be false");
   });
 
   it("should consider two instances unequal if they differ by status message", function() {
-    var httpResponse1 = new HttpResponse(
+    const httpResponse1 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah"
     );
-    var httpResponse2 = new HttpResponse(
+    const httpResponse2 = new HttpResponse(
       "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nquux"
     );
     expect(httpResponse1.equals(httpResponse2), "to be false");
   });
 
   it("should parse a buffer", function() {
-    var rawSrc =
+    const rawSrc =
       "HTTP/1.1 200 OK\r\n" +
       "X-Powered-By: Express\r\n" +
       "Content-Type: text/plain\r\n" +
@@ -224,7 +224,7 @@ describe("HttpResponse", function() {
       "\r\n" +
       "blah";
 
-    var httpResponse = new HttpResponse(new Buffer(rawSrc, "ascii"));
+    const httpResponse = new HttpResponse(new Buffer(rawSrc, "ascii"));
 
     expect(httpResponse.toString(), "to equal", rawSrc);
   });

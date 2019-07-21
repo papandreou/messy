@@ -1,6 +1,6 @@
 /* global describe, it */
-var expect = require("unexpected");
-var StatusLine = require("../lib/StatusLine");
+const expect = require("unexpected");
+const StatusLine = require("../lib/StatusLine");
 
 describe("StatusLine", function() {
   describe("#toJSON", function() {
