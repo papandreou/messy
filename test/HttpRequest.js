@@ -1,6 +1,6 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    HttpRequest = require('../lib/HttpRequest');
+/* global describe, it */
+var expect = require('unexpected');
+    var HttpRequest = require('../lib/HttpRequest');
 
 describe('HttpRequest', function () {
     it('should complain when receiving an unsupported property', function () {
@@ -127,44 +127,44 @@ describe('HttpRequest', function () {
     });
 
     it('should consider an identical instance equal', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
         expect(httpRequest1.equals(httpRequest2), 'to be true');
     });
 
     it('should consider two instances unequal if they differ by method', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('POST /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('POST /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by url', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('GET /bar HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('GET /bar HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by protocol', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 
     it('should consider two instances unequal if their headers differ', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nblah');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nblah');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 
     it('should consider two instances unequal if their bodies differ', function () {
-        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah'),
-            httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nquux');
+        var httpRequest1 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah');
+            var httpRequest2 = new HttpRequest('GET /foo HTTP/1.1\r\nHost: bar.com\r\n\r\nquux');
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 
     it('should consider instances with different encrypted flags different', function () {
-        var httpRequest1 = new HttpRequest({encrypted: true}),
-            httpRequest2 = new HttpRequest({encrypted: false});
+        var httpRequest1 = new HttpRequest({encrypted: true});
+            var httpRequest2 = new HttpRequest({encrypted: false});
         expect(httpRequest1.equals(httpRequest2), 'to be false');
     });
 

@@ -1,8 +1,8 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    HttpExchange = require('../lib/HttpExchange'),
-    HttpRequest = require('../lib/HttpRequest'),
-    HttpResponse = require('../lib/HttpResponse');
+/* global describe, it */
+var expect = require('unexpected');
+    var HttpExchange = require('../lib/HttpExchange');
+    var HttpRequest = require('../lib/HttpRequest');
+    var HttpResponse = require('../lib/HttpResponse');
 
 describe('HttpExchange', function () {
     it('should accept an object containing an HttpRequest and an HttpResponse instance', function () {
@@ -76,8 +76,8 @@ describe('HttpExchange', function () {
                     },
                     body: 'blaf'
                 }
-            }),
-            httpExchange2 = new HttpExchange({
+            });
+            var httpExchange2 = new HttpExchange({
                 request: {
                     method: 'GET',
                     url: '/foo',
@@ -104,8 +104,8 @@ describe('HttpExchange', function () {
                     },
                     body: 'blaf'
                 }
-            }),
-            httpExchange2 = new HttpExchange({
+            });
+            var httpExchange2 = new HttpExchange({
                 request: {
                     method: 'GET',
                     url: '/foo',

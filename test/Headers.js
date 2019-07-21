@@ -1,6 +1,6 @@
-/*global describe, it*/
-var unexpected = require('unexpected'),
-    Headers = require('../lib/Headers');
+/* global describe, it */
+var unexpected = require('unexpected');
+    var Headers = require('../lib/Headers');
 
 describe('Headers', function () {
     var expect = unexpected.clone();

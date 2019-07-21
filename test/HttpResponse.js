@@ -1,6 +1,6 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    HttpResponse = require('../lib/HttpResponse');
+/* global describe, it */
+var expect = require('unexpected');
+    var HttpResponse = require('../lib/HttpResponse');
 
 describe('HttpResponse', function () {
     it('should complain when receiving an unsupported property', function () {
@@ -109,38 +109,38 @@ describe('HttpResponse', function () {
     });
 
     it('should consider an identical instance equal', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
         expect(httpResponse1.equals(httpResponse2), 'to be true');
     });
 
     it('should consider two instances unequal if they differ by protocol', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by status code', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.1 400 OK\r\nContent-Type: text/html\r\n\r\nblah');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.1 400 OK\r\nContent-Type: text/html\r\n\r\nblah');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by status message', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.1 200 KO\r\nContent-Type: text/html\r\n\r\nblah');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.1 200 KO\r\nContent-Type: text/html\r\n\r\nblah');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by status message', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nblah');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nblah');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
 
     it('should consider two instances unequal if they differ by status message', function () {
-        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'),
-            httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nquux');
+        var httpResponse1 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah');
+            var httpResponse2 = new HttpResponse('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nquux');
         expect(httpResponse1.equals(httpResponse2), 'to be false');
     });
 

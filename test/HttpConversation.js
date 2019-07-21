@@ -1,9 +1,9 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    HttpConversation = require('../lib/HttpConversation'),
-    HttpExchange = require('../lib/HttpExchange'),
-    HttpRequest = require('../lib/HttpRequest'),
-    HttpResponse = require('../lib/HttpResponse');
+/* global describe, it */
+var expect = require('unexpected');
+    var HttpConversation = require('../lib/HttpConversation');
+    var HttpExchange = require('../lib/HttpExchange');
+    var HttpRequest = require('../lib/HttpRequest');
+    var HttpResponse = require('../lib/HttpResponse');
 
 describe('HttpConversation', function () {
     it('should accept an object with an exchanges property containing an array of objects containing an HttpRequest and HttpResponse instances', function () {
@@ -85,7 +85,7 @@ describe('HttpConversation', function () {
                     }
                 }
             ]
-        }), httpConversation2 = new HttpConversation({
+        }); var httpConversation2 = new HttpConversation({
             exchanges: [
                 {
                     request: {
@@ -120,7 +120,7 @@ describe('HttpConversation', function () {
                     }
                 }
             ]
-        }), httpConversation2 = new HttpConversation({
+        }); var httpConversation2 = new HttpConversation({
             exchanges: [
                 {
                     request: {

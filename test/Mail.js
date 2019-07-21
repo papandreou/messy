@@ -1,6 +1,6 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    Mail = require('../lib/Mail');
+/* global describe, it */
+var expect = require('unexpected');
+    var Mail = require('../lib/Mail');
 
 describe('Mail', function () {
     it('should rfc2047 decode the header values', function () {

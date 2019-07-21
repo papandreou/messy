@@ -1,6 +1,6 @@
-/*global describe, it*/
-var expect = require('unexpected'),
-    Message = require('../lib/Message');
+/* global describe, it */
+var expect = require('unexpected');
+    var Message = require('../lib/Message');
 
 it.skipIf = function (condition) {
     (condition ? it.skip : it).apply(it, Array.prototype.slice.call(arguments, 1));
