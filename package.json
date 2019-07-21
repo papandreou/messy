@@ -10,7 +10,7 @@
     "lint": "eslint . && prettier --check '**/*.js'",
     "test": "mocha",
     "ci": "npm test && npm run coverage && npm run lint && (<coverage/lcov.info coveralls || true)",
-    "coverage": "NODE_ENV=development istanbul cover _mocha -- --reporter dot && echo google-chrome coverage/lcov-report/index.html"
+    "coverage": "NODE_ENV=development nyc --reporter=lcov --reporter=text --all -- npm test && echo google-chrome coverage/lcov-report/index.html"
   },
   "keywords": [
     "http",
@@ -34,8 +34,8 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
+    "nyc": "^14.1.1",
     "prettier": "~1.18.2",
     "unexpected": "^10.26.3"
   },
@@ -45,5 +45,10 @@
     "rfc2047": "2.0.0",
     "rfc2231": "1.3.0",
     "underscore": "^1.6.0"
+  },
+  "nyc": {
+    "include": [
+      "lib/**"
+    ]
   }
 }
