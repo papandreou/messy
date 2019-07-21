@@ -6,6 +6,7 @@ describe('HttpResponse', function() {
   it('should complain when receiving an unsupported property', function() {
     expect(
       function() {
+        // eslint-disable-next-line no-new
         new HttpResponse({ contentType: 'text/css' });
       },
       'to throw',
@@ -192,7 +193,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by status message', function() {
+  it('should consider two instances unequal if they differ by Content-Type', function() {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -202,7 +203,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by status message', function() {
+  it('should consider two instances unequal if they differ by body', function() {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );

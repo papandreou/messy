@@ -31,6 +31,7 @@ describe('Message', function() {
   it('should complain when receiving an unsupported property', function() {
     expect(
       function() {
+        // eslint-disable-next-line no-new
         new Message({ contentType: 'text/css' });
       },
       'to throw',

@@ -6,6 +6,7 @@ describe('HttpRequest', function() {
   it('should complain when receiving an unsupported property', function() {
     expect(
       function() {
+        // eslint-disable-next-line no-new
         new HttpRequest({ contentType: 'text/css' });
       },
       'to throw',
@@ -14,6 +15,7 @@ describe('HttpRequest', function() {
   });
 
   it('should allow the credentials property to be passed (for fetch)', function() {
+    // eslint-disable-next-line no-new
     new HttpRequest({ credentials: 'same-origin' });
   });
 
@@ -358,6 +360,7 @@ describe('HttpRequest', function() {
     it('should throw if different hosts are passed in the host property and in the url', function() {
       expect(
         function() {
+          // eslint-disable-next-line no-new
           new HttpRequest({
             url: 'GET http://blabla.com:3000/',
             host: 'localhost'
@@ -379,6 +382,7 @@ describe('HttpRequest', function() {
     it('should throw if different ports are passed in the port property and in the url', function() {
       expect(
         function() {
+          // eslint-disable-next-line no-new
           new HttpRequest({ url: 'GET http://blabla.com:3000/', port: 3020 });
         },
         'to throw',
