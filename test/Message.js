@@ -2,21 +2,21 @@
 const expect = require('unexpected');
 const Message = require('../lib/Message');
 
-it.skipIf = function(condition) {
+it.skipIf = function (condition) {
   (condition ? it.skip : it).apply(
     it,
     Array.prototype.slice.call(arguments, 1)
   );
 };
 
-describe('Message', function() {
-  it('should accept an options object with headers and body', function() {
+describe('Message', function () {
+  it('should accept an options object with headers and body', function () {
     const message = new Message({
       headers: {
         Received: ['foo', 'bar'],
-        Subject: 'hey'
+        Subject: 'hey',
       },
-      body: 'abc'
+      body: 'abc',
     });
     expect(message.body, 'to equal', 'abc');
     expect(message.headers.getAll('received'), 'to equal', ['foo', 'bar']);
@@ -28,9 +28,9 @@ describe('Message', function() {
     );
   });
 
-  it('should complain when receiving an unsupported property', function() {
+  it('should complain when receiving an unsupported property', function () {
     expect(
-      function() {
+      function () {
         // eslint-disable-next-line no-new
         new Message({ contentType: 'text/css' });
       },
@@ -39,7 +39,7 @@ describe('Message', function() {
     );
   });
 
-  it('should parse the headers from the input', function() {
+  it('should parse the headers from the input', function () {
     const message = new Message(
       'From: thisguy@example.com\r\nTo: thisotherguy@example.com'
     );
@@ -47,62 +47,62 @@ describe('Message', function() {
     expect(message.headers.getNamesLowerCase(), 'to equal', ['from', 'to']);
   });
 
-  it('should support reading a Buffer instance with iso-8859-1 chars', function() {
+  it('should support reading a Buffer instance with iso-8859-1 chars', function () {
     const buffer = Buffer.concat([
       Buffer.from('From: ', 'ascii'),
       Buffer.from([0xf8]),
-      Buffer.from('foobarquux', 'ascii')
+      Buffer.from('foobarquux', 'ascii'),
     ]);
     expect(new Message(buffer).headers.get('From'), 'to equal', 'øfoobarquux');
   });
 
-  it('should handle folded lines when parsing', function() {
+  it('should handle folded lines when parsing', function () {
     const message = new Message('Subject: abc\r\n def');
     expect(message.headers.get('subject'), 'to equal', 'abc def');
   });
 
-  it('should handle folded lines with just CR when parsing', function() {
+  it('should handle folded lines with just CR when parsing', function () {
     const message = new Message('Subject: abc\r def');
     expect(message.headers.get('subject'), 'to equal', 'abc def');
   });
 
-  it('should handle folded lines with just LF when parsing', function() {
+  it('should handle folded lines with just LF when parsing', function () {
     const message = new Message('Subject: abc\n def');
     expect(message.headers.get('subject'), 'to equal', 'abc def');
   });
 
-  it('should handle folded lines + tabs when parsing', function() {
+  it('should handle folded lines + tabs when parsing', function () {
     // Observed on iPhone
     const message = new Message('Subject: abc\r\n\tdef');
     expect(message.headers.get('subject'), 'to equal', 'abc\tdef');
   });
 
-  it('should keep the buffer as a Buffer when the message is provided as a Buffer', function() {
+  it('should keep the buffer as a Buffer when the message is provided as a Buffer', function () {
     expect(
       new Message(
         Buffer.concat([
           Buffer.from('From: foo@bar\r\n' + '\r\n', 'utf-8'),
-          Buffer.from([0xf8])
+          Buffer.from([0xf8]),
         ])
       ),
       'to have properties',
       {
-        body: Buffer.from([0xf8])
+        body: Buffer.from([0xf8]),
       }
     );
   });
 
-  it('should detect the end of the headers properly when separated by CRCR', function() {
+  it('should detect the end of the headers properly when separated by CRCR', function () {
     expect(
       new Message(
         Buffer.concat([
           Buffer.from('From: foo@bar\r\r', 'utf-8'),
-          Buffer.from([0xf8])
+          Buffer.from([0xf8]),
         ])
       ),
       'to have properties',
       {
-        body: Buffer.from([0xf8])
+        body: Buffer.from([0xf8]),
       }
     );
 
@@ -113,17 +113,17 @@ describe('Message', function() {
     );
   });
 
-  it('should detect the end of the headers properly when separated by LFLF', function() {
+  it('should detect the end of the headers properly when separated by LFLF', function () {
     expect(
       new Message(
         Buffer.concat([
           Buffer.from('From: foo@bar\n\n', 'utf-8'),
-          Buffer.from([0xf8])
+          Buffer.from([0xf8]),
         ])
       ),
       'to have properties',
       {
-        body: Buffer.from([0xf8])
+        body: Buffer.from([0xf8]),
       }
     );
 
@@ -134,26 +134,26 @@ describe('Message', function() {
     );
   });
 
-  it('should not read past CRLFCRLF when parsing', function() {
+  it('should not read past CRLFCRLF when parsing', function () {
     const message = new Message('Subject: abc\r\n\r\nFrom: me');
     expect(message.headers.get('from'), 'to be', undefined);
   });
 
-  it('should not read past CRCR when parsing', function() {
+  it('should not read past CRCR when parsing', function () {
     const message = new Message('Subject: abc\r\rFrom: me');
     expect(message.headers.get('from'), 'to be', undefined);
   });
 
-  it('should not read past LFLF when parsing', function() {
+  it('should not read past LFLF when parsing', function () {
     const message = new Message('Subject: abc\r\rFrom: me');
     expect(message.headers.get('from'), 'to be', undefined);
   });
 
-  it('should produce an empty string when handed an empty buffer', function() {
+  it('should produce an empty string when handed an empty buffer', function () {
     expect(new Message(Buffer.alloc(0)).toString(), 'to equal', '');
   });
 
-  it('should parse Real Life message from Apple Mail', function() {
+  it('should parse Real Life message from Apple Mail', function () {
     const message = new Message(
       Buffer.from(
         [
@@ -169,7 +169,7 @@ describe('Message', function() {
           '',
           '',
           '--Apple-Mail-589ECA5D-7F89-4C39-B7B7-7FD03E6333CD',
-          '...'
+          '...',
         ].join('\r\n'),
         'utf-8'
       )
@@ -183,7 +183,7 @@ describe('Message', function() {
       'Message-Id',
       'Date',
       'To',
-      'Mime-Version'
+      'Mime-Version',
     ]);
     expect(message.headers.getNamesLowerCase(), 'to equal', [
       'content-type',
@@ -193,7 +193,7 @@ describe('Message', function() {
       'message-id',
       'date',
       'to',
-      'mime-version'
+      'mime-version',
     ]);
     expect(
       message.headers.get('Content-Type'),
@@ -214,7 +214,7 @@ describe('Message', function() {
     );
   });
 
-  it('should preserve repeated headers', function() {
+  it('should preserve repeated headers', function () {
     const message = new Message('Received: foo\r\nReceived: bar\r\n');
 
     expect(
@@ -224,35 +224,35 @@ describe('Message', function() {
     );
   });
 
-  it('should preserve text after CRLFCRLF as-is', function() {
+  it('should preserve text after CRLFCRLF as-is', function () {
     const message = new Message('foo: bar\r\n\r\nthis is the:body');
 
     expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body');
   });
 
-  it('should preserve text after CRCR as-is', function() {
+  it('should preserve text after CRCR as-is', function () {
     const message = new Message('foo: bar\r\rthis is the:body');
 
     expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body');
   });
 
-  it('should preserve text after LFLF as-is', function() {
+  it('should preserve text after LFLF as-is', function () {
     const message = new Message('foo: bar\n\nthis is the:body');
 
     expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body');
   });
 
-  it('should preserve text after LFCRLFCR as-is', function() {
+  it('should preserve text after LFCRLFCR as-is', function () {
     const message = new Message('foo: bar\n\r\n\rthis is the:body');
 
     expect(message.toString(), 'to equal', 'Foo: bar\r\n\r\nthis is the:body');
   });
 
-  it('should read an iso-8859-1 body after LFCRLFCR into a buffer and turn it into REPLACEMENT CHARACTER U+FFFD when serializing as text', function() {
+  it('should read an iso-8859-1 body after LFCRLFCR into a buffer and turn it into REPLACEMENT CHARACTER U+FFFD when serializing as text', function () {
     const message = new Message(
       Buffer.concat([
         Buffer.from('foo: bar\n\r\n\rthis is the:body', 'utf-8'),
-        Buffer.from([0xf8, 0xe6])
+        Buffer.from([0xf8, 0xe6]),
       ])
     );
     expect(
@@ -260,7 +260,7 @@ describe('Message', function() {
       'to equal',
       Buffer.concat([
         Buffer.from('this is the:body', 'utf-8'),
-        Buffer.from([0xf8, 0xe6])
+        Buffer.from([0xf8, 0xe6]),
       ])
     );
     expect(
@@ -270,49 +270,49 @@ describe('Message', function() {
     );
   });
 
-  it('should treat a body passed as a Buffer as the unchunked body', function() {
+  it('should treat a body passed as a Buffer as the unchunked body', function () {
     const message = new Message({ body: Buffer.from([0xff]) });
     expect(message._unchunkedBody, 'to equal', Buffer.from([0xff]));
   });
 
-  describe('#hasEmptyBody', function() {
-    it('should consider a zero length Buffer to be an empty body', function() {
+  describe('#hasEmptyBody', function () {
+    it('should consider a zero length Buffer to be an empty body', function () {
       expect(
         new Message({ body: Buffer.from([]) }).hasEmptyBody(),
         'to be true'
       );
     });
 
-    it('should consider a non-zero length Buffer not to be an empty body', function() {
+    it('should consider a non-zero length Buffer not to be an empty body', function () {
       expect(
         new Message({ body: Buffer.from([123]) }).hasEmptyBody(),
         'to be false'
       );
     });
 
-    it('should consider the empty string to be an empty body', function() {
+    it('should consider the empty string to be an empty body', function () {
       expect(new Message({ body: '' }).hasEmptyBody(), 'to be true');
     });
 
-    it('should consider a non-empty string not to be an empty body', function() {
+    it('should consider a non-empty string not to be an empty body', function () {
       expect(new Message({ body: 'foo' }).hasEmptyBody(), 'to be false');
     });
 
-    it('should consider undefined to be an empty body', function() {
+    it('should consider undefined to be an empty body', function () {
       expect(new Message({ body: undefined }).hasEmptyBody(), 'to be true');
     });
 
-    it('should consider an absent body to be empty', function() {
+    it('should consider an absent body to be empty', function () {
       expect(new Message().hasEmptyBody(), 'to be true');
     });
 
-    it('should consider an empty Object to be a non-empty body', function() {
+    it('should consider an empty Object to be a non-empty body', function () {
       expect(new Message({ body: {} }).hasEmptyBody(), 'to be false');
     });
   });
 
-  describe('with a JSON body', function() {
-    it('should provide a parsed body (and default to utf-8)', function() {
+  describe('with a JSON body', function () {
+    it('should provide a parsed body (and default to utf-8)', function () {
       expect(
         new Message(
           Buffer.from(
@@ -322,12 +322,12 @@ describe('Message', function() {
         ).body,
         'to equal',
         {
-          foo: 'æøå'
+          foo: 'æøå',
         }
       );
     });
 
-    it('should support a Content-Type that ends with +json', function() {
+    it('should support a Content-Type that ends with +json', function () {
       expect(
         new Message(
           Buffer.from(
@@ -337,12 +337,12 @@ describe('Message', function() {
         ).body,
         'to equal',
         {
-          foo: 'æøå'
+          foo: 'æøå',
         }
       );
     });
 
-    it('should reserialize the body as utf-8', function() {
+    it('should reserialize the body as utf-8', function () {
       const message = new Message(
         Buffer.from('Content-Type: application/json\n\n{"foo":"æøå"}', 'utf-8')
       );
@@ -350,41 +350,41 @@ describe('Message', function() {
       expect(message.rawBody, 'to equal', Buffer.from('{"foo":"☺"}', 'utf-8'));
     });
 
-    describe('with an application/json body that does not parse as JSON', function() {
+    describe('with an application/json body that does not parse as JSON', function () {
       const message = new Message({
         headers: { 'Content-Type': 'application/json' },
-        unchunkedBody: '!!=!='
+        unchunkedBody: '!!=!=',
       });
 
-      it('should leave unchunkedBody as-is', function() {
+      it('should leave unchunkedBody as-is', function () {
         expect(message.unchunkedBody, 'to equal', '!!=!=');
       });
 
-      it('should provide body as a string', function() {
+      it('should provide body as a string', function () {
         expect(message.body, 'to equal', '!!=!=');
       });
     });
 
-    describe('when the body is specified as a string', function() {
-      it('should interpret the string as already encoded JSON', function() {
+    describe('when the body is specified as a string', function () {
+      it('should interpret the string as already encoded JSON', function () {
         const msg = new Message({
           headers: { 'Content-Type': 'application/json' },
-          body: '{"foo":     123}'
+          body: '{"foo":     123}',
         });
         expect(msg.unchunkedBody.toString(), 'to equal', '{"foo":     123}');
       });
     });
   });
 
-  describe('with parts passed to the constructor', function() {
-    it('should accept both messy.Message instances and valid constructor arguments ', function() {
+  describe('with parts passed to the constructor', function () {
+    it('should accept both messy.Message instances and valid constructor arguments ', function () {
       const message = new Message({
         headers: 'Content-Type: multipart/mixed',
         parts: [
           new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>'),
           { headers: 'Content-Type: text/plain', body: 'Hello, world!' },
-          'Content-Type: text/foo\r\n\r\nhey'
-        ]
+          'Content-Type: text/foo\r\n\r\nhey',
+        ],
       });
       expect(message.parts.length, 'to equal', 3);
       expect(
@@ -408,12 +408,12 @@ describe('Message', function() {
       );
     });
 
-    it('should pick up the boundary with boundary', function() {
+    it('should pick up the boundary with boundary', function () {
       const message = new Message({
         headers: 'Content-Type: multipart/mixed; boundary=foo',
         parts: [
-          new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>')
-        ]
+          new Message('Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>'),
+        ],
       });
       expect(message.parts.length, 'to equal', 1);
       expect(
@@ -429,12 +429,12 @@ describe('Message', function() {
       );
     });
 
-    it('should allow passing a single part', function() {
+    it('should allow passing a single part', function () {
       const message = new Message({
         headers: 'Content-Type: multipart/mixed; boundary=foo',
         parts: new Message(
           'Content-Type: text/html\r\n\r\n<h1>Hello, world!</h1>'
-        )
+        ),
       });
       expect(message.parts.length, 'to equal', 1);
       expect(
@@ -451,7 +451,7 @@ describe('Message', function() {
     });
   });
 
-  describe('with a multipart body', function() {
+  describe('with a multipart body', function () {
     const src =
       'Content-Type: multipart/form-data;\r\n' +
       ' boundary=--------------------------231099812216460892104111\r\n' +
@@ -474,7 +474,7 @@ describe('Message', function() {
       'The message\r\n' +
       '----------------------------231099812216460892104111--\r\n';
 
-    it('should decode the multipart parts when the body is passed as a Buffer', function() {
+    it('should decode the multipart parts when the body is passed as a Buffer', function () {
       const message = new Message(Buffer.from(src, 'utf-8'));
 
       expect(message.toString(), 'to equal', src);
@@ -503,11 +503,11 @@ describe('Message', function() {
             'Content-Disposition: form-data; name="Message "\r\n\r\nThe message',
             'utf-8'
           )
-        )
+        ),
       ]);
     });
 
-    it('should decode the multipart parts when the body is passed as a string', function() {
+    it('should decode the multipart parts when the body is passed as a string', function () {
       const message = new Message(src);
 
       expect(message.parts, 'to equal', [
@@ -522,11 +522,11 @@ describe('Message', function() {
         ),
         new Message(
           'Content-Disposition: form-data; name="Message "\r\n\r\nThe message'
-        )
+        ),
       ]);
     });
 
-    it('#toString should serialize the (possibly mutated) decoded parts if available', function() {
+    it('#toString should serialize the (possibly mutated) decoded parts if available', function () {
       const message = new Message(src);
 
       message.parts.splice(1, 3);
@@ -548,20 +548,20 @@ describe('Message', function() {
       );
     });
 
-    it('should reparse the parts if the body of the containing Message is updated', function() {
+    it('should reparse the parts if the body of the containing Message is updated', function () {
       const message = new Message(src);
       message.parts.splice(1, 3);
       message.body = src;
       expect(message.parts, 'to have length', 4);
     });
 
-    it('should support updating the parts property', function() {
+    it('should support updating the parts property', function () {
       const message = new Message(src);
       message.parts = [];
       expect(message.parts, 'to equal', []);
     });
 
-    it('should recompute the body if the parts are updated', function() {
+    it('should recompute the body if the parts are updated', function () {
       const message = new Message(src);
       expect(message.parts, 'to have length', 4);
       message.parts.splice(1, 3);
@@ -576,7 +576,7 @@ describe('Message', function() {
       );
     });
 
-    it('should recompute the body if the parts are updated, binary mode', function() {
+    it('should recompute the body if the parts are updated, binary mode', function () {
       const message = new Message(src);
       expect(message.parts, 'to have length', 4);
       message.parts[0].body = Buffer.from([0]);
@@ -595,8 +595,8 @@ describe('Message', function() {
     });
   });
 
-  describe('#unchunkedBody', function() {
-    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function() {
+  describe('#unchunkedBody', function () {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -616,7 +616,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function() {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -639,7 +639,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when a partial body is provided as a string', function() {
+    it('should decode Transfer-Encoding:chunked when a partial body is provided as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -673,7 +673,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function() {
+    it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -713,8 +713,8 @@ describe('Message', function() {
       );
     });
 
-    describe('when accessed as a setter', function() {
-      it('should update rawBody and body', function() {
+    describe('when accessed as a setter', function () {
+      it('should update rawBody and body', function () {
         const message = new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
             'Transfer-Encoding: chunked\r\n' +
@@ -738,13 +738,13 @@ describe('Message', function() {
       });
     });
 
-    describe('when passed to the constructor', function() {
-      it('should populate rawBody and body', function() {
+    describe('when passed to the constructor', function () {
+      it('should populate rawBody and body', function () {
         const message = new Message({
           headers:
             'Content-Type: text/plain; charset=UTF-8\r\n' +
             'Transfer-Encoding: chunked\r\n',
-          unchunkedBody: 'foobar'
+          unchunkedBody: 'foobar',
         });
         expect(
           message.rawBody,
@@ -756,8 +756,8 @@ describe('Message', function() {
     });
   });
 
-  describe('#decodedBody', function() {
-    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function() {
+  describe('#decodedBody', function () {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -777,7 +777,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function() {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -800,7 +800,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when a partial body is provided as a string', function() {
+    it('should decode Transfer-Encoding:chunked when a partial body is provided as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -834,7 +834,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function() {
+    it('should decode Transfer-Encoding:chunked when a partial body is provided as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -874,8 +874,8 @@ describe('Message', function() {
       );
     });
 
-    describe('when accessed as a setter', function() {
-      it('should update rawBody and body', function() {
+    describe('when accessed as a setter', function () {
+      it('should update rawBody and body', function () {
         const message = new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
             'Transfer-Encoding: chunked\r\n' +
@@ -899,13 +899,13 @@ describe('Message', function() {
       });
     });
 
-    describe('when passed to the constructor', function() {
-      it('should populate rawBody and body', function() {
+    describe('when passed to the constructor', function () {
+      it('should populate rawBody and body', function () {
         const message = new Message({
           headers:
             'Content-Type: text/plain; charset=UTF-8\r\n' +
             'Transfer-Encoding: chunked\r\n',
-          decodedBody: 'foobar'
+          decodedBody: 'foobar',
         });
         expect(
           message.rawBody,
@@ -917,8 +917,8 @@ describe('Message', function() {
     });
   });
 
-  describe('#body', function() {
-    it('should decode the body as text when the Content-Type contains +xml', function() {
+  describe('#body', function () {
+    it('should decode the body as text when the Content-Type contains +xml', function () {
       expect(
         new Message(
           'Content-Type: foobar+xml\r\n' +
@@ -930,7 +930,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a string', function() {
+    it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -943,7 +943,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a Buffer', function() {
+    it('should decode a base64 body to a string when the Content-Transfer-Encoding is base64 and the Content-Type is textual and the body is stored as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -958,7 +958,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode a base64 body to a Buffer when the Content-Transfer-Encoding is base64 and the Content-Type is not textual', function() {
+    it('should decode a base64 body to a Buffer when the Content-Transfer-Encoding is base64 and the Content-Type is not textual', function () {
       expect(
         new Message(
           'Content-Type: image/png; charset=UTF-8\r\n' +
@@ -971,7 +971,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode quoted-printable when the Content-Transfer-Encoding header says so', function() {
+    it('should decode quoted-printable when the Content-Transfer-Encoding header says so', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -984,7 +984,7 @@ describe('Message', function() {
       );
     });
 
-    it('should not break if the Content-Transfer-Encoding is unsupported', function() {
+    it('should not break if the Content-Transfer-Encoding is unsupported', function () {
       expect(
         new Message(
           'Content-Type: image/png; charset=UTF-8\r\n' +
@@ -997,7 +997,7 @@ describe('Message', function() {
       );
     });
 
-    it('should support quoted-printable with iso-8859-1', function() {
+    it('should support quoted-printable with iso-8859-1', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=iso-8859-1\r\n' +
@@ -1010,7 +1010,7 @@ describe('Message', function() {
       );
     });
 
-    it('should provide a decoded body when the body is already given as a string with no Content-Transfer-Encoding, even when a charset is defined', function() {
+    it('should provide a decoded body when the body is already given as a string with no Content-Transfer-Encoding, even when a charset is defined', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' + '\r\n' + 'Abcdef\r\n'
@@ -1020,7 +1020,7 @@ describe('Message', function() {
       );
     });
 
-    it('should support quoted-printable with no Content-Transfer-Encoding', function() {
+    it('should support quoted-printable with no Content-Transfer-Encoding', function () {
       expect(
         new Message(
           Buffer.concat([
@@ -1030,7 +1030,7 @@ describe('Message', function() {
                 'Abc '
             ),
             Buffer.from([0xf8]),
-            Buffer.from('\r\n')
+            Buffer.from('\r\n'),
           ])
         ).body,
         'to equal',
@@ -1038,7 +1038,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function() {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a string', function () {
       expect(
         new Message(
           'Content-Type: text/plain; charset=UTF-8\r\n' +
@@ -1058,7 +1058,7 @@ describe('Message', function() {
       );
     });
 
-    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function() {
+    it('should decode Transfer-Encoding:chunked when the body is provided as a Buffer', function () {
       expect(
         new Message(
           Buffer.from(
@@ -1084,7 +1084,7 @@ describe('Message', function() {
     it.skipIf(
       !require('zlib').gunzipSync,
       'should decode Content-Encoding:gzip',
-      function() {
+      function () {
         expect(
           new Message(
             Buffer.concat([
@@ -1120,8 +1120,8 @@ describe('Message', function() {
                 0x06,
                 0x00,
                 0x00,
-                0x00
-              ])
+                0x00,
+              ]),
             ])
           ).body,
           'to equal',
@@ -1133,14 +1133,14 @@ describe('Message', function() {
     it.skipIf(
       !require('zlib').gunzipSync,
       'should decode Content-Encoding:gzip when the message has been instantiated from an object',
-      function() {
+      function () {
         expect(
           new Message({
             headers: {
               'Content-Type': 'text/plain',
-              'Content-Encoding': 'gzip'
+              'Content-Encoding': 'gzip',
             },
-            unchunkedBody: require('zlib').gzipSync('foobarquux')
+            unchunkedBody: require('zlib').gzipSync('foobarquux'),
           }).body,
           'to equal',
           'foobarquux'
@@ -1148,7 +1148,7 @@ describe('Message', function() {
       }
     );
 
-    it('should decode application/x-www-form-urlencoded as text', function() {
+    it('should decode application/x-www-form-urlencoded as text', function () {
       const src = Buffer.from(
         'Content-Type: application/x-www-form-urlencoded\n\nfoo=bar&data=%5B%22foo.txt%22%5D',
         'ascii'
@@ -1161,13 +1161,13 @@ describe('Message', function() {
     });
   });
 
-  describe('#rawBody', function() {
-    it('should be populated when instantiating a Message from a string', function() {
+  describe('#rawBody', function () {
+    it('should be populated when instantiating a Message from a string', function () {
       const rawBody = 'Foo: bar\r\n\r\nquux';
       expect(new Message(rawBody).rawBody, 'to equal', 'quux');
     });
 
-    it('should be populated when instantiating a Message from a Buffer', function() {
+    it('should be populated when instantiating a Message from a Buffer', function () {
       const rawBody = Buffer.from('Foo: bar\r\n\r\nquux', 'utf-8');
       expect(
         new Message(rawBody).rawBody,
@@ -1176,7 +1176,7 @@ describe('Message', function() {
       );
     });
 
-    it('should be recomputed from the body if updated, with Content-Transfer-Encoding', function() {
+    it('should be recomputed from the body if updated, with Content-Transfer-Encoding', function () {
       const message = new Message(
         'Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\nZm9vYmFy'
       );
@@ -1186,7 +1186,7 @@ describe('Message', function() {
       expect(message.rawBody, 'to equal', 'cXV1eA==');
     });
 
-    it('should be recomputed from the body if updated, with quoted-printable and a charset', function() {
+    it('should be recomputed from the body if updated, with quoted-printable and a charset', function () {
       const message = new Message(
         'Content-Type: text/plain; charset=iso-8859-1\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\nF=E6'
       );
@@ -1196,7 +1196,7 @@ describe('Message', function() {
       expect(message.rawBody, 'to equal', '=F8h');
     });
 
-    it('should be recomputed from the body if updated, with transfer-encoding: chunked', function() {
+    it('should be recomputed from the body if updated, with transfer-encoding: chunked', function () {
       const message = new Message(
         'Content-Type: text/plain; charset=utf-8\r\n' +
           'Transfer-Encoding: chunked\r\n\r\n' +
@@ -1219,7 +1219,7 @@ describe('Message', function() {
     it.skipIf(
       !require('zlib').gzipSync,
       'should be recomputed from the body if updated, with Content-Encoding:gzip',
-      function() {
+      function () {
         const message = new Message(
           Buffer.concat([
             Buffer.from(
@@ -1254,8 +1254,8 @@ describe('Message', function() {
               0x06,
               0x00,
               0x00,
-              0x00
-            ])
+              0x00,
+            ]),
           ])
         );
         expect(message.body, 'to equal', 'foobar');
@@ -1289,7 +1289,7 @@ describe('Message', function() {
             0x06,
             0x00,
             0x00,
-            0x00
+            0x00,
           ])
         );
         expect(message.body, 'to equal', 'barfoo');
@@ -1297,9 +1297,9 @@ describe('Message', function() {
     );
   });
 
-  describe('#fileName', function() {
-    describe('when invoked as a getter', function() {
-      it('should decode the Content-Disposition filename', function() {
+  describe('#fileName', function () {
+    describe('when invoked as a getter', function () {
+      it('should decode the Content-Disposition filename', function () {
         const message = new Message(
           'Content-Disposition: attachment;\r\n' +
             " filename*0*=utf-8''%72%C3%A6%61%6C%6C%79%20%73%63%72%65%77%65%64%20%75;\r\n" +
@@ -1318,7 +1318,7 @@ describe('Message', function() {
         );
       });
 
-      it('should not fall back to the name property of the Content-Type header when the Content-Disposition header has no filename parameter', function() {
+      it('should not fall back to the name property of the Content-Type header when the Content-Disposition header has no filename parameter', function () {
         const message = new Message(
           'Content-Transfer-Encoding: base64\r\n' +
             'Content-Disposition: attachment\r\n' +
@@ -1327,7 +1327,7 @@ describe('Message', function() {
         expect(message.fileName, 'to equal', undefined);
       });
 
-      it('should not fall back to the name property of the Content-Type header when there is no Content-Disposition header', function() {
+      it('should not fall back to the name property of the Content-Type header when there is no Content-Disposition header', function () {
         const message = new Message(
           'Content-Transfer-Encoding: base64\r\n' +
             'Content-Type: image/png; name="=?iso-8859-1?Q?=E6=F8=E5.png?="'
@@ -1336,8 +1336,8 @@ describe('Message', function() {
       });
     });
 
-    describe('when invoked as a setter', function() {
-      it('should support a fileName setter which updates the Content-Disposition filename with the rfc2231 encoded representation', function() {
+    describe('when invoked as a setter', function () {
+      it('should support a fileName setter which updates the Content-Disposition filename with the rfc2231 encoded representation', function () {
         const message = new Message({ body: 'bar' });
         message.fileName =
           'ræally screwed up long attachment filename with smileys☺ and ☺and ¡Hola, señor! and foreign weirdnessםולש ןב ילטפנ in it.☺';
@@ -1358,9 +1358,9 @@ describe('Message', function() {
         );
       });
 
-      it('should not update the name property of the Content-Type header, even if available', function() {
+      it('should not update the name property of the Content-Type header, even if available', function () {
         const message = new Message({
-          headers: { 'Content-Type': 'image/png' }
+          headers: { 'Content-Type': 'image/png' },
         });
         message.fileName = 'æøå.png';
         expect(
@@ -1373,39 +1373,39 @@ describe('Message', function() {
     });
   });
 
-  describe('#toJSON', function() {
-    it('should include headers if any are present', function() {
+  describe('#toJSON', function () {
+    it('should include headers if any are present', function () {
       expect(new Message('Foo: bar').toJSON(), 'to equal', {
         headers: {
-          Foo: 'bar'
-        }
+          Foo: 'bar',
+        },
       });
     });
 
-    it('should not include an empty headers object', function() {
+    it('should not include an empty headers object', function () {
       expect(new Message('\r\nhey').toJSON(), 'to equal', {
-        rawBody: 'hey'
+        rawBody: 'hey',
       });
     });
 
-    it('should include the parsed representation of the body if it has been touched', function() {
+    it('should include the parsed representation of the body if it has been touched', function () {
       const message = new Message(
         'Content-type: application/json\r\n\r\n{"foo":"bar"}'
       );
       message.body.blah = 123;
       expect(message.toJSON(), 'to equal', {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: {
           foo: 'bar',
-          blah: 123
-        }
+          blah: 123,
+        },
       });
     });
 
-    describe('with a multipart message', function() {
-      it('should not include the parts if they have not been touched', function() {
+    describe('with a multipart message', function () {
+      it('should not include the parts if they have not been touched', function () {
         expect(
           new Message(
             'Content-Type: multipart/mixed; boundary=foo\r\n' +
@@ -1419,20 +1419,20 @@ describe('Message', function() {
           'to equal',
           {
             headers: {
-              'Content-Type': 'multipart/mixed; boundary=foo'
+              'Content-Type': 'multipart/mixed; boundary=foo',
             },
             rawBody:
               '--foo\r\n' +
               'Content-Type: text/html; charset=UTF-8\r\n' +
               '\r\n' +
               '<h1>Hello, world!</h1>\r\n' +
-              '--foo--\r\n'
+              '--foo--\r\n',
           }
         );
       });
     });
 
-    it('should include parts if they have been touched', function() {
+    it('should include parts if they have been touched', function () {
       const message = new Message(
         'Content-Type: multipart/mixed; boundary=foo\r\n' +
           '\r\n' +
@@ -1447,32 +1447,32 @@ describe('Message', function() {
 
       expect(message.toJSON(), 'to equal', {
         headers: {
-          'Content-Type': 'multipart/mixed; boundary=foo'
+          'Content-Type': 'multipart/mixed; boundary=foo',
         },
         parts: [
           {
             headers: {
               'Content-Type': 'text/html; charset=UTF-8',
-              Hey: 'there'
+              Hey: 'there',
             },
-            rawBody: '<h1>Hello, world!</h1>'
-          }
-        ]
+            rawBody: '<h1>Hello, world!</h1>',
+          },
+        ],
       });
     });
   });
 
-  describe('with a JSON body provided as an object despite a non-JSON Content-Type', function() {
+  describe('with a JSON body provided as an object despite a non-JSON Content-Type', function () {
     const message = new Message({
       headers: {
-        'Content-Type': 'application/octet-stream'
+        'Content-Type': 'application/octet-stream',
       },
       body: {
-        foo: 123
-      }
+        foo: 123,
+      },
     });
 
-    it('should stringify correctly', function() {
+    it('should stringify correctly', function () {
       expect(
         message.toString(),
         'to equal',
@@ -1480,7 +1480,7 @@ describe('Message', function() {
       );
     });
 
-    it('should have the correct unchunkedBody', function() {
+    it('should have the correct unchunkedBody', function () {
       expect(
         message.unchunkedBody.toString('utf-8'),
         'to equal',

@@ -2,7 +2,7 @@
 const unexpected = require('unexpected');
 const Headers = require('../lib/Headers');
 
-describe('Headers', function() {
+describe('Headers', function () {
   const expect = unexpected.clone();
 
   // Not published yet
@@ -10,13 +10,13 @@ describe('Headers', function() {
     expect.installPlugin(require('unexpected-messy'));
   } catch (e) {}
 
-  it('should accept a string', function() {
+  it('should accept a string', function () {
     const headers = new Headers('Subject: hey, dude!');
     expect(headers.get('subject'), 'to equal', 'hey, dude!');
     expect(headers.toString(), 'to equal', 'Subject: hey, dude!\r\n');
   });
 
-  it('should fold the lines when serializing', function() {
+  it('should fold the lines when serializing', function () {
     const headers = new Headers({ subject: 'hey there, dude!' });
     expect(
       headers.toString(10),
@@ -25,7 +25,7 @@ describe('Headers', function() {
     );
   });
 
-  it('should accept an array header value when instantiating via an Object', function() {
+  it('should accept an array header value when instantiating via an Object', function () {
     const headers = new Headers({ received: ['foo', 'bar'] });
 
     expect(
@@ -35,13 +35,13 @@ describe('Headers', function() {
     );
   });
 
-  it('should accept a string header value', function() {
+  it('should accept a string header value', function () {
     const headers = new Headers({ received: 'foo' });
 
     expect(headers.toString(), 'to equal', 'Received: foo\r\n');
   });
 
-  it('should accept multiple occurrences of the same header with different casing', function() {
+  it('should accept multiple occurrences of the same header with different casing', function () {
     const headers = new Headers({ cookie: 'foo=bar', Cookie: 'quux=baz' });
 
     expect(
@@ -51,7 +51,7 @@ describe('Headers', function() {
     );
   });
 
-  it('should accept multiple occurrences of the same header with different casing when the first is given as an array', function() {
+  it('should accept multiple occurrences of the same header with different casing when the first is given as an array', function () {
     const headers = new Headers({ cookie: ['foo=bar'], Cookie: 'quux=baz' });
 
     expect(
@@ -61,7 +61,7 @@ describe('Headers', function() {
     );
   });
 
-  it('should accept multiple occurrences of the same header with different casing when the second is given as an array', function() {
+  it('should accept multiple occurrences of the same header with different casing when the second is given as an array', function () {
     const headers = new Headers({ cookie: 'foo=bar', Cookie: ['quux=baz'] });
 
     expect(
@@ -71,13 +71,13 @@ describe('Headers', function() {
     );
   });
 
-  it('should return the header names in their original case', function() {
+  it('should return the header names in their original case', function () {
     expect(new Headers({ 'X-in-ORIGNAL-Case': 'baz' }).getNames(), 'to equal', [
-      'X-in-ORIGNAL-Case'
+      'X-in-ORIGNAL-Case',
     ]);
   });
 
-  it('should return lower case header names when requested', function() {
+  it('should return lower case header names when requested', function () {
     expect(
       new Headers({ 'X-in-ORIGNAL-Case': 'baz' }).getNamesLowerCase(),
       'to equal',
@@ -85,52 +85,52 @@ describe('Headers', function() {
     );
   });
 
-  describe('#remove', function() {
-    it('should remove all header values for the given header when only passed one argument', function() {
+  describe('#remove', function () {
+    it('should remove all header values for the given header when only passed one argument', function () {
       const headers = new Headers({ foo: ['bla', 'bar'], quux: 'baz' });
       headers.remove('foo');
       expect(headers, 'to equal', new Headers({ quux: 'baz' }));
     });
 
-    it('should remove a single header value', function() {
+    it('should remove a single header value', function () {
       const headers = new Headers({ foo: 'bar', quux: 'baz' });
       headers.remove('foo', 'bar');
       expect(headers, 'to equal', new Headers({ quux: 'baz' }));
     });
 
-    it('should remove one out of multiple values', function() {
+    it('should remove one out of multiple values', function () {
       const headers = new Headers({ foo: ['bar', 'bla'], quux: 'baz' });
       headers.remove('foo', 'bar');
       expect(headers, 'to equal', new Headers({ foo: 'bla', quux: 'baz' }));
     });
 
-    it('should remove multiple values, leaving one', function() {
+    it('should remove multiple values, leaving one', function () {
       const headers = new Headers({ foo: ['bar', 'bla', 'hey'], quux: 'baz' });
       headers.remove('foo', ['bar', 'hey']);
       expect(headers, 'to equal', new Headers({ foo: 'bla', quux: 'baz' }));
     });
 
-    it('should remove multiple values, leaving none', function() {
+    it('should remove multiple values, leaving none', function () {
       const headers = new Headers({ foo: ['bla', 'hey'], quux: 'baz' });
       headers.remove('foo', ['hey', 'bla']);
       expect(headers, 'to equal', new Headers({ quux: 'baz' }));
       expect(headers.valuesByName.foo, 'to be undefined');
     });
 
-    it('should remove all header values found in object', function() {
+    it('should remove all header values found in object', function () {
       const headers = new Headers({ foo: ['bla', 'bar'], quux: 'baz' });
       expect(headers.remove({ foo: 'bar', quux: 'baz' }), 'to equal', 2);
       expect(headers, 'to equal', new Headers({ foo: 'bla' }));
     });
 
-    it('should remove header value specified by number', function() {
+    it('should remove header value specified by number', function () {
       const headers = new Headers({ foo: ['bla', 'bar'], quux: 'baz' });
       expect(headers.remove('foo', 1), 'to equal', 1);
       expect(headers.remove('foo', 1), 'to equal', 0);
       expect(headers, 'to equal', new Headers({ foo: 'bla', quux: 'baz' }));
     });
 
-    it('should return the number of removed values when removing all values of a header', function() {
+    it('should return the number of removed values when removing all values of a header', function () {
       expect(
         new Headers({ foo: ['bla', 'hey'], quux: 'baz' }).remove('foo'),
         'to equal',
@@ -138,7 +138,7 @@ describe('Headers', function() {
       );
     });
 
-    it('should return the number of removed values when removing one out of two', function() {
+    it('should return the number of removed values when removing one out of two', function () {
       expect(
         new Headers({ foo: ['bla', 'hey'], quux: 'baz' }).remove('foo', 'hey'),
         'to equal',
@@ -146,18 +146,18 @@ describe('Headers', function() {
       );
     });
 
-    it('should return the number of removed values when removing two out of two', function() {
+    it('should return the number of removed values when removing two out of two', function () {
       expect(
         new Headers({ foo: ['bla', 'hey'], quux: 'baz' }).remove('foo', [
           'bla',
-          'hey'
+          'hey',
         ]),
         'to equal',
         2
       );
     });
 
-    it('should return 0 when the attempting to remove a single value that was not found', function() {
+    it('should return 0 when the attempting to remove a single value that was not found', function () {
       expect(
         new Headers({ foo: 'hey', quux: 'baz' }).remove('foo', 'dah'),
         'to equal',
@@ -165,7 +165,7 @@ describe('Headers', function() {
       );
     });
 
-    it('should return 0 when the attempting to remove multiple value that were not found', function() {
+    it('should return 0 when the attempting to remove multiple value that were not found', function () {
       expect(
         new Headers({ foo: 'hey', quux: 'baz' }).remove('foo', ['dah', 'bla']),
         'to equal',
@@ -174,26 +174,26 @@ describe('Headers', function() {
     });
   });
 
-  describe('#toCanonicalObject', function() {
+  describe('#toCanonicalObject', function () {
     expect(
       new Headers({ foo: 'hey', quux: 'baz' }).toCanonicalObject(),
       'to equal',
       {
         Foo: ['hey'],
-        Quux: ['baz']
+        Quux: ['baz'],
       }
     );
   });
 
-  describe('#set', function() {
-    it('should preserve existing values when adding a string value', function() {
+  describe('#set', function () {
+    it('should preserve existing values when adding a string value', function () {
       const headers = new Headers({ foo: 'bar' });
       expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
       headers.set('foo', 'quux');
       expect(headers.toString(), 'to equal', 'Foo: bar\r\nFoo: quux\r\n');
     });
 
-    it('should remove all existing values when passed an empty array', function() {
+    it('should remove all existing values when passed an empty array', function () {
       const headers = new Headers({ foo: 'bar' });
       expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
       headers.set('foo', []);
@@ -201,20 +201,20 @@ describe('Headers', function() {
       expect(headers.toString(), 'to equal', '');
     });
 
-    it('should replace existing values when passed an array of strings', function() {
+    it('should replace existing values when passed an array of strings', function () {
       const headers = new Headers({ foo: 'bar' });
       expect(headers.toString(), 'to equal', 'Foo: bar\r\n');
       headers.set('foo', ['hey']);
       expect(headers.toString(), 'to equal', 'Foo: hey\r\n');
     });
 
-    describe('when passed an object', function() {
-      it('should act as a shorthand for calling set with each (key, value)', function() {
+    describe('when passed an object', function () {
+      it('should act as a shorthand for calling set with each (key, value)', function () {
         const headers = new Headers({ foo: 'bar', baz: 'quux' });
         headers.set({
           foo: ['bar2'],
           baz: 'quux2',
-          yadda: 'blah'
+          yadda: 'blah',
         });
         expect(
           headers.toString(),
@@ -225,15 +225,15 @@ describe('Headers', function() {
     });
   });
 
-  describe('#parameter()', function() {
-    describe('when called with just a header name', function() {
-      it('should return a hash of attributes when the header has attributes', function() {
+  describe('#parameter()', function () {
+    describe('when called with just a header name', function () {
+      it('should return a hash of attributes when the header has attributes', function () {
         expect(new Headers('Foo: bar; quux=baz').parameter('Foo'), 'to equal', {
-          quux: 'baz'
+          quux: 'baz',
         });
       });
 
-      it('should unquote quoted parameters', function() {
+      it('should unquote quoted parameters', function () {
         expect(
           new Headers('Foo: bar; quux="baz"').parameter('Foo'),
           'to equal',
@@ -241,11 +241,11 @@ describe('Headers', function() {
         );
       });
 
-      it('should return an empty hash when the header has no attributes', function() {
+      it('should return an empty hash when the header has no attributes', function () {
         expect(new Headers('Foo: bar').parameter('Foo'), 'to equal', {});
       });
 
-      it('should return undefined when the header does not exist', function() {
+      it('should return undefined when the header does not exist', function () {
         expect(
           new Headers('Foo: bar').parameter('Quux'),
           'to equal',
@@ -253,7 +253,7 @@ describe('Headers', function() {
         );
       });
 
-      it('should decode rfc2231-encoded attributes', function() {
+      it('should decode rfc2231-encoded attributes', function () {
         expect(
           new Headers(
             'Content-Type: text/plain;\r\n' +
@@ -269,18 +269,18 @@ describe('Headers', function() {
           'to equal',
           {
             filename:
-              'ræally screwed up long attachment filename with smileys☺ and ☺and ¡Hola, señor! and foreign weirdnessםולש ןב ילטפנ in it.☺'
+              'ræally screwed up long attachment filename with smileys☺ and ☺and ¡Hola, señor! and foreign weirdnessםולש ןב ילטפנ in it.☺',
           }
         );
       });
     });
 
-    describe('when called with a header name and an attribute name', function() {
-      it('should return the attribute value', function() {
+    describe('when called with a header name and an attribute name', function () {
+      it('should return the attribute value', function () {
         expect(new Headers('Foo: hey').parameter('Foo'), 'to equal', {});
       });
 
-      it('should return undefined when the header has no attributes', function() {
+      it('should return undefined when the header has no attributes', function () {
         expect(
           new Headers('Foo: hey').parameter('Foo', 'bar'),
           'to equal',
@@ -288,7 +288,7 @@ describe('Headers', function() {
         );
       });
 
-      it('should return undefined when the header has attributes, but not the one being asked for', function() {
+      it('should return undefined when the header has attributes, but not the one being asked for', function () {
         expect(
           new Headers('Foo: hey; quux=blah').parameter('Foo', 'bar'),
           'to equal',
@@ -296,7 +296,7 @@ describe('Headers', function() {
         );
       });
 
-      it('should return undefined when the header is not there', function() {
+      it('should return undefined when the header is not there', function () {
         expect(
           new Headers('Foo: bar').parameter('Bar', 'quux'),
           'to equal',
@@ -305,20 +305,20 @@ describe('Headers', function() {
       });
     });
 
-    describe('when called with a header name, an attribute name, and an attribute value', function() {
-      it('should define the attribute if it does not exist', function() {
+    describe('when called with a header name, an attribute name, and an attribute value', function () {
+      it('should define the attribute if it does not exist', function () {
         const headers = new Headers('Foo: hey');
         headers.parameter('Foo', 'blah', 'baz');
         expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
       });
 
-      it('should update the attribute if it already exists', function() {
+      it('should update the attribute if it already exists', function () {
         const headers = new Headers('Foo: hey; blah=quux');
         headers.parameter('Foo', 'blah', 'baz');
         expect(headers.toString(), 'to equal', 'Foo: hey; blah=baz\r\n');
       });
 
-      it('should transparently encode non-ASCII attribute values using rfc2231', function() {
+      it('should transparently encode non-ASCII attribute values using rfc2231', function () {
         const headers = new Headers('Content-Type: text/plain');
         headers.parameter(
           'Content-Type',
@@ -342,14 +342,14 @@ describe('Headers', function() {
     });
   });
 
-  describe('#toJSON', function() {
-    it('should output a single-value header as a string', function() {
+  describe('#toJSON', function () {
+    it('should output a single-value header as a string', function () {
       expect(new Headers('Foo: bar').toJSON(), 'to equal', { Foo: 'bar' });
     });
 
-    it('should output a multi-value header as an array of strings', function() {
+    it('should output a multi-value header as an array of strings', function () {
       expect(new Headers('Foo: bar\r\nFoo: quux').toJSON(), 'to equal', {
-        Foo: ['bar', 'quux']
+        Foo: ['bar', 'quux'],
       });
     });
   });

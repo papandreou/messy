@@ -2,10 +2,10 @@
 const expect = require('unexpected');
 const HttpResponse = require('../lib/HttpResponse');
 
-describe('HttpResponse', function() {
-  it('should complain when receiving an unsupported property', function() {
+describe('HttpResponse', function () {
+  it('should complain when receiving an unsupported property', function () {
     expect(
-      function() {
+      function () {
         // eslint-disable-next-line no-new
         new HttpResponse({ contentType: 'text/css' });
       },
@@ -14,7 +14,7 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should parse a standalone status line', function() {
+  it('should parse a standalone status line', function () {
     const httpResponse = new HttpResponse('HTTP/1.1 200 OK');
     expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');
     expect(httpResponse.statusCode, 'to equal', 200);
@@ -22,7 +22,7 @@ describe('HttpResponse', function() {
     expect(httpResponse.toString(), 'to equal', 'HTTP/1.1 200 OK\r\n');
   });
 
-  it('should parse a status line with more than one word in the status message', function() {
+  it('should parse a status line with more than one word in the status message', function () {
     const httpResponse = new HttpResponse('HTTP/1.1 412 Precondition Failed');
     expect(httpResponse.protocol, 'to equal', 'HTTP/1.1');
     expect(httpResponse.statusCode, 'to equal', 412);
@@ -34,7 +34,7 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should parse a status line followed by headers', function() {
+  it('should parse a status line followed by headers', function () {
     const httpResponse = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n'
     );
@@ -46,7 +46,7 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should parse a status line followed by headers and a body', function() {
+  it('should parse a status line followed by headers and a body', function () {
     const httpResponse = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -59,69 +59,69 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should accept the status line as an option to the constructor', function() {
+  it('should accept the status line as an option to the constructor', function () {
     expect(
       new HttpResponse({ statusLine: 'HTTP/1.1 200 OK' }),
       'to have properties',
       {
         protocol: 'HTTP/1.1',
         statusCode: 200,
-        statusMessage: 'OK'
+        statusMessage: 'OK',
       }
     );
   });
 
-  it('should accept a number and interpret it as the status code', function() {
+  it('should accept a number and interpret it as the status code', function () {
     expect(new HttpResponse(404), 'to have properties', {
-      statusCode: 404
+      statusCode: 404,
     });
   });
 
-  it('should parse a partial status line', function() {
+  it('should parse a partial status line', function () {
     expect(new HttpResponse('HTTP/1.1 200'), 'to have properties', {
       protocol: 'HTTP/1.1',
-      statusCode: 200
+      statusCode: 200,
     });
   });
 
-  it('should only include CRLFCRLF when there are no headers', function() {
+  it('should only include CRLFCRLF when there are no headers', function () {
     expect(
       new HttpResponse({
         statusLine: 'HTTP/1.1 200 OK',
-        body: 'foo'
+        body: 'foo',
       }).toString(),
       'to equal',
       'HTTP/1.1 200 OK\r\n\r\nfoo'
     );
   });
 
-  it('should expose the StatusLine instance', function() {
+  it('should expose the StatusLine instance', function () {
     expect(
       new HttpResponse({
         protocol: 'HTTP/1.1',
         statusCode: 200,
-        statusMessage: 'OK'
+        statusMessage: 'OK',
       }).statusLine.toString(),
       'to equal',
       'HTTP/1.1 200 OK'
     );
   });
 
-  it('should allow updating the status line', function() {
+  it('should allow updating the status line', function () {
     const httpResponse = new HttpResponse({
       protocol: 'HTTP/1.1',
       statusCode: 200,
-      statusMessage: 'OK'
+      statusMessage: 'OK',
     });
     httpResponse.statusLine.populateFromString('HTTP/1.0 400 Bad Request');
     expect(httpResponse, 'to have properties', {
       protocol: 'HTTP/1.0',
       statusCode: 400,
-      statusMessage: 'Bad Request'
+      statusMessage: 'Bad Request',
     });
   });
 
-  it('should make the protocol version available as a getter', function() {
+  it('should make the protocol version available as a getter', function () {
     expect(
       new HttpResponse('HTTP/1.1 200 OK').protocolVersion,
       'to equal',
@@ -129,7 +129,7 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should make the protocol name available as a getter', function() {
+  it('should make the protocol name available as a getter', function () {
     expect(
       new HttpResponse('HTTP/1.0 200 OK').protocolName,
       'to equal',
@@ -137,23 +137,23 @@ describe('HttpResponse', function() {
     );
   });
 
-  it('should accept the individual status line properties as options to the constructor', function() {
+  it('should accept the individual status line properties as options to the constructor', function () {
     expect(
       new HttpResponse({
         protocol: 'HTTP/1.1',
         statusCode: 200,
-        statusMessage: 'OK'
+        statusMessage: 'OK',
       }),
       'to have properties',
       {
         protocol: 'HTTP/1.1',
         statusCode: 200,
-        statusMessage: 'OK'
+        statusMessage: 'OK',
       }
     );
   });
 
-  it('should consider an identical instance equal', function() {
+  it('should consider an identical instance equal', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -163,7 +163,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be true');
   });
 
-  it('should consider two instances unequal if they differ by protocol', function() {
+  it('should consider two instances unequal if they differ by protocol', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -173,7 +173,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by status code', function() {
+  it('should consider two instances unequal if they differ by status code', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -183,7 +183,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by status message', function() {
+  it('should consider two instances unequal if they differ by status message', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -193,7 +193,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by Content-Type', function() {
+  it('should consider two instances unequal if they differ by Content-Type', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -203,7 +203,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should consider two instances unequal if they differ by body', function() {
+  it('should consider two instances unequal if they differ by body', function () {
     const httpResponse1 = new HttpResponse(
       'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nblah'
     );
@@ -213,7 +213,7 @@ describe('HttpResponse', function() {
     expect(httpResponse1.equals(httpResponse2), 'to be false');
   });
 
-  it('should parse a buffer', function() {
+  it('should parse a buffer', function () {
     const rawSrc =
       'HTTP/1.1 200 OK\r\n' +
       'X-Powered-By: Express\r\n' +
@@ -230,8 +230,8 @@ describe('HttpResponse', function() {
     expect(httpResponse.toString(), 'to equal', rawSrc);
   });
 
-  describe('#toJSON', function() {
-    it('should include the messy.Message properties and put the statusLine properties at the top level', function() {
+  describe('#toJSON', function () {
+    it('should include the messy.Message properties and put the statusLine properties at the top level', function () {
       expect(
         new HttpResponse('HTTP/1.1 200 OK\r\nFoo: bar\r\n\r\nblabla').toJSON(),
         'to equal',
@@ -241,9 +241,9 @@ describe('HttpResponse', function() {
           statusCode: 200,
           statusMessage: 'OK',
           headers: {
-            Foo: 'bar'
+            Foo: 'bar',
           },
-          rawBody: 'blabla'
+          rawBody: 'blabla',
         }
       );
     });

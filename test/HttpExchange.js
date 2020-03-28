@@ -4,11 +4,11 @@ const HttpExchange = require('../lib/HttpExchange');
 const HttpRequest = require('../lib/HttpRequest');
 const HttpResponse = require('../lib/HttpResponse');
 
-describe('HttpExchange', function() {
-  it('should accept an object containing an HttpRequest and an HttpResponse instance', function() {
+describe('HttpExchange', function () {
+  it('should accept an object containing an HttpRequest and an HttpResponse instance', function () {
     const httpExchange = new HttpExchange({
       request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
-      response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
+      response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf'),
     });
 
     expect(httpExchange, 'to have properties', ['request', 'response']);
@@ -21,10 +21,10 @@ describe('HttpExchange', function() {
     );
   });
 
-  it('should accept an object containing request and response as strings', function() {
+  it('should accept an object containing request and response as strings', function () {
     const httpExchange = new HttpExchange({
       request: 'GET / HTTP/1.1\nFoo: Bar\n\nblah',
-      response: 'HTTP/1.1 200 OK\nQuux: Baz\n\nblaf'
+      response: 'HTTP/1.1 200 OK\nQuux: Baz\n\nblaf',
     });
     expect(httpExchange, 'to have properties', ['request', 'response']);
     expect(httpExchange.request, 'to be an', HttpRequest);
@@ -36,24 +36,24 @@ describe('HttpExchange', function() {
     );
   });
 
-  it('should accept an object containing HttpRequest and HttpResponse options objects', function() {
+  it('should accept an object containing HttpRequest and HttpResponse options objects', function () {
     const httpExchange = new HttpExchange({
       request: {
         requestLine: {
           method: 'GET',
           protocol: 'HTTP/1.1',
-          path: '/'
+          path: '/',
         },
         headers: {
-          'Content-Type': 'text/html'
+          'Content-Type': 'text/html',
         },
-        body: 'The Body'
+        body: 'The Body',
       },
       response: {
         statusLine: 'HTTP/1.1 404 Not Found',
         headers: 'Content-Type: application/json',
-        body: { foo: 123 }
-      }
+        body: { foo: 123 },
+      },
     });
     expect(httpExchange, 'to have properties', ['request', 'response']);
     expect(httpExchange.request, 'to be an', HttpRequest);
@@ -65,17 +65,17 @@ describe('HttpExchange', function() {
     );
   });
 
-  it('should consider identical instances equal', function() {
+  it('should consider identical instances equal', function () {
     const httpExchange1 = new HttpExchange({
       request: 'GET /foo HTTP/1.1\r\nHost: foo.com\r\n\r\nblah',
       response: {
         statusLine: {
           statusCode: 200,
           protocol: 'HTTP/1.1',
-          statusMessage: 'OK'
+          statusMessage: 'OK',
         },
-        body: 'blaf'
-      }
+        body: 'blaf',
+      },
     });
     const httpExchange2 = new HttpExchange({
       request: {
@@ -83,46 +83,46 @@ describe('HttpExchange', function() {
         url: '/foo',
         protocol: 'HTTP/1.1',
         headers: {
-          host: 'foo.com'
+          host: 'foo.com',
         },
-        body: 'blah'
+        body: 'blah',
       },
-      response: 'HTTP/1.1 200 OK\r\n\r\nblaf'
+      response: 'HTTP/1.1 200 OK\r\n\r\nblaf',
     });
     expect(httpExchange1.equals(httpExchange2), 'to be true');
     expect(httpExchange1.toString(), 'to equal', httpExchange2.toString());
   });
 
-  it('should consider different instances unequal', function() {
+  it('should consider different instances unequal', function () {
     const httpExchange1 = new HttpExchange({
       request: 'GET /foo HTTP/1.0\r\nHost: foo.com\r\n\r\nblah',
       response: {
         statusLine: {
           statusCode: 200,
           protocol: 'HTTP/1.1',
-          statusMessage: 'OK'
+          statusMessage: 'OK',
         },
-        body: 'blaf'
-      }
+        body: 'blaf',
+      },
     });
     const httpExchange2 = new HttpExchange({
       request: {
         method: 'GET',
         url: '/foo',
-        protocol: 'HTTP/1.1'
+        protocol: 'HTTP/1.1',
       },
-      response: 'HTTP/1.1 200 OK\r\n\r\nblaf'
+      response: 'HTTP/1.1 200 OK\r\n\r\nblaf',
     });
     expect(httpExchange1.equals(httpExchange2), 'to be false');
     expect(httpExchange1.toString(), 'not to equal', httpExchange2.toString());
   });
 
-  describe('#toJSON', function() {
-    it('should return an object with the request and response JSONified', function() {
+  describe('#toJSON', function () {
+    it('should return an object with the request and response JSONified', function () {
       expect(
         new HttpExchange({
           request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
-          response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf')
+          response: new HttpResponse('HTTP/1.1 200 OK\nQuux: Baz\n\nblaf'),
         }).toJSON(),
         'to equal',
         {
@@ -132,9 +132,9 @@ describe('HttpExchange', function() {
             protocolName: 'HTTP',
             protocolVersion: '1.1',
             headers: {
-              Foo: 'Bar'
+              Foo: 'Bar',
             },
-            rawBody: 'blah'
+            rawBody: 'blah',
           },
           response: {
             statusCode: 200,
@@ -142,27 +142,27 @@ describe('HttpExchange', function() {
             protocolName: 'HTTP',
             protocolVersion: '1.1',
             headers: {
-              Quux: 'Baz'
+              Quux: 'Baz',
             },
-            rawBody: 'blaf'
-          }
+            rawBody: 'blaf',
+          },
         }
       );
     });
 
     // Makes it possible to use statusLine.toJSON() as the RHS of a 'to satisfy' assertion in Unexpected
     // where undefined means that the property must not be present:
-    it('should not include the keys that have undefined values', function() {
+    it('should not include the keys that have undefined values', function () {
       const httpExchange = new HttpExchange({
         request: new HttpRequest('GET / HTTP/1.1\nFoo: Bar\n\nblah'),
-        response: undefined
+        response: undefined,
       });
 
       httpExchange.request = undefined;
 
       expect(httpExchange.toJSON(), 'not to have keys', [
         'request',
-        'response'
+        'response',
       ]);
     });
   });
