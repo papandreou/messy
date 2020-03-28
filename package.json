@@ -9,8 +9,8 @@
   "scripts": {
     "lint": "eslint . && prettier --check '**/*.js'",
     "test": "mocha",
-    "ci": "npm test && npm run coverage && npm run lint",
-    "coverage": "NODE_ENV=development nyc --reporter=lcov --reporter=text --all -- npm test && echo google-chrome coverage/lcov-report/index.html"
+    "test:ci": "npm run coverage",
+    "coverage": "nyc --reporter=lcov --reporter=text --all -- npm test && echo google-chrome coverage/lcov-report/index.html"
   },
   "keywords": [
     "http",
