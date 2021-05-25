@@ -40,7 +40,7 @@
     "unexpected": "^12.0.0"
   },
   "dependencies": {
-    "iconv-lite": "^0.6.0",
+    "iconv-lite": "0.6.3",
     "lodash.omit": "^4.5.0",
     "quoted-printable": "^1.0.1",
     "rfc2047": "^3.0.1",
